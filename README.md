@@ -1,5 +1,7 @@
 # class-setup
 
-`vue`(https://www.npmjs.com/package/vue-property-decorator)
+#### 清单
 
-`store`(https://www.npmjs.com/package/vuex-module-decorators)
+1.vue - [vue-property-decorator](https://www.npmjs.com/package/vue-property-decorator)
+
+2.vuex - [vuex-module-decorators](https://www.npmjs.com/package/vuex-module-decorators)
