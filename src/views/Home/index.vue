@@ -6,7 +6,7 @@ export default class HomeView extends Vue {}
 </script>
 
 <template>
-  <div class="rg-body">home</div>
+  <div class="rg-body">IShome</div>
 </template>
 
 <style scoped lang="less">
