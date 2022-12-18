@@ -52,7 +52,8 @@ class StorageClient {
    * @description 获取值
    * @param {key: string, def: any}
    * */
-  public get(key: string, def = null): void | null {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public get(key: string, def = null): any | null {
     try {
       const data = this.storage.getItem(this.GetKey(key));
       if (data && data.length) {

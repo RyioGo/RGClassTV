@@ -8,10 +8,22 @@ const baseRoutes: Array<RouteConfig> = [
     component: Home,
   },
   {
-    path: "/login",
-    name: "login",
+    path: "/select",
+    name: "select",
     component: () =>
-      import(/* webpackChunkName: "login" */ "@/views/Login/index.vue"),
+      import(/* webpackChunkName: "select" */ "@/views/Select/index.vue"),
+  },
+  {
+    path: "/detail",
+    name: "detail",
+    component: () =>
+      import(/* webpackChunkName: "detail" */ "@/views/Detail/index.vue"),
+  },
+  {
+    path: "/form",
+    name: "form",
+    component: () =>
+      import(/* webpackChunkName: "form" */ "@/views/Form/index.vue"),
   },
 ];
 

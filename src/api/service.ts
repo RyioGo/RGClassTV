@@ -1,5 +1,6 @@
 import { AxiosRequestConfig, AxiosResponse } from "axios";
 import HttpClient from "@/libs/axios";
+import { Notify } from "vant";
 
 const RGApi: HttpClient = new HttpClient(defaultConfig(), {
   UseRequest,
@@ -21,11 +22,20 @@ function defaultConfig(): AxiosRequestConfig {
 
 //  请求拦截器
 function UseRequest(config: AxiosRequestConfig) {
+  if (config.method == "post") {
+    config.headers = Object.assign({}, config.headers, {
+      "Content-Type": "application/x-www-form-urlencoded",
+    });
+  }
   return config;
 }
 //  响应拦截器
 function UseResponse(response: AxiosResponse) {
-  return response;
+  if (response.status == 200) {
+    return response.data;
+  } else {
+    Notify({ type: "danger", message: "已拦截本次异常请求！" });
+  }
 }
 
 export default RGApi;
