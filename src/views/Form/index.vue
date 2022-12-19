@@ -9,8 +9,12 @@ export default class FormView extends Vue {
   @Ref("form") from!: any;
 
   public toPath(): void {
-    console.log(this.from.form);
+    this.storage.set("form", this.from.form);
+    this.$router.push({
+      name: "submit",
+    });
   }
+
   private created() {
     let formId = this.storage.get("selectData").formId;
     // eslint-disable-next-line @typescript-eslint/no-var-requires

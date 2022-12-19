@@ -17,10 +17,10 @@ import { userInfoType } from "@/types/user";
 export default class User extends VuexModule {
   public userInfo: userInfoType = {
     token: "",
-    name: "",
-    idCard: "",
-    phone: "",
-    sex: "",
+    name: "qwe",
+    idCard: "1234sssssssss5",
+    phone: "09876",
+    sex: "1",
     appid: "",
   };
   public isLogin = false;
@@ -35,6 +35,14 @@ export default class User extends VuexModule {
 
   get forPhone(): string {
     return utils.getPhone(this.userInfo.phone);
+  }
+
+  get forSex(): string {
+    let str = "男";
+    if (this.userInfo.sex == "0") {
+      str = "女";
+    }
+    return str;
   }
 
   @Mutation

@@ -1,7 +1,7 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 
-import { detailType, itemArrayType, resourceArrayType } from "@/types/select";
+import { detailType } from "@/types/select";
 
 import RGHeader from "@/components/RGHeader/index.vue";
 @Component({
@@ -48,7 +48,7 @@ export default class DetailView extends Vue {
                 plain
                 style="margin-right: 3px"
               >
-                必选
+                必填
               </van-tag>
               {{ it.resourceName }}
             </template>

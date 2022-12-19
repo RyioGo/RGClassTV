@@ -25,6 +25,12 @@ const baseRoutes: Array<RouteConfig> = [
     component: () =>
       import(/* webpackChunkName: "form" */ "@/views/Form/index.vue"),
   },
+  {
+    path: "/submit",
+    name: "submit",
+    component: () =>
+      import(/* webpackChunkName: "submit" */ "@/views/Submit/index.vue"),
+  },
 ];
 
 export default baseRoutes;

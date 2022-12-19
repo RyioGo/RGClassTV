@@ -7,11 +7,17 @@ import { Notify } from "vant";
 import { signParamsType, defaultDataType } from "@/types/api";
 
 export default {
-  getSign(params: signParamsType): Promise<any> {
+  getSign(
+    params: signParamsType,
+    headers: any = {
+      "Content-Type": "application/x-www-form-urlencoded",
+    }
+  ): Promise<any> {
     return RGApi.request({
       method: "post",
       url: storage.get("globalConfig").signUrl,
       data: params,
+      headers,
     });
   },
   async getGate(key: string, params: any, headers?: any): Promise<any> {
@@ -28,6 +34,34 @@ export default {
         headers,
       });
     } catch (error) {
+      Notify({ type: "warning", message: "验签未通过，请稍后重试！" });
+    }
+  },
+  async getFile(key: string, params: File): Promise<any> {
+    //  配置赣服通参数
+    const data: any = defaultData(key, {}, {});
+    const fd: any = new FormData();
+    //  将数据依次计入FormData数据
+    Object.keys(data).forEach((item: string) => {
+      fd.append(item, data[item]);
+    });
+    fd.append("file", params);
+    //  获取赣服通签名
+    try {
+      const res = await this.getSign(fd, {
+        "Content-Type": "multipart/form-data",
+      });
+      fd.append("sign", res.data.sign);
+      return RGApi.request({
+        method: "post",
+        url: storage.get("globalConfig").gateUrl,
+        data: fd,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+    } catch (error) {
+      debugger;
       Notify({ type: "warning", message: "验签未通过，请稍后重试！" });
     }
   },

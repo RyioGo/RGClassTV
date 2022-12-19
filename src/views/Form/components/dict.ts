@@ -912,7 +912,7 @@ export default {
       },
     ],
   },
-  dyqscdj: {
+  bdcdydj: {
     DengJiDaLei: [
       {
         text: "抵押登记",

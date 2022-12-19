@@ -23,7 +23,7 @@ const globalConfig: any = {
     tokenUrl: "/jxtyyh/interfaces/jis/getTicket.do",
     signUrl: "/api-gateway/jpaas-jags-server/interface/createsign",
     gateUrl: "/api-gateway/jpaas-jags-server/interface/gateway.do",
-    api: ["gjuhidiuwqhuhbj", "hqywsbxx"],
+    api: ["gjuhidiuwqhuhbj", "hqywsbxx", "fyxlphqqyxx", "wjsc"],
     eval: {
       appCode: "fyxyjsycb",
       appName: "分宜县一件事一次办",
