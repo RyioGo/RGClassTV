@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <RGEval />
     <router-view />
     <RGFooter />
     <RGLoader
@@ -19,10 +20,11 @@
   position: relative;
   background-color: #f7f8fa;
 }
+
 .sticky {
-  margin-top: 12px;
   position: sticky;
   z-index: 4;
   top: 12px;
+  margin-top: 12px;
 }
 </style>

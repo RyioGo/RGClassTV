@@ -4,7 +4,7 @@ import Home from "@/views/Home/index.vue";
 const baseRoutes: Array<RouteConfig> = [
   {
     path: "/",
-    name: "Home",
+    name: "home",
     component: Home,
   },
   {

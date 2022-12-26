@@ -11,6 +11,15 @@ export default class DetailView extends Vue {
   public detail: detailType = this.storage.get("detail");
 
   public toPath(): void {
+    let enr: string = this.storage.get("eToken") || "";
+
+    if (enr.length == 0 && this.detail.serviceObj == "0") {
+      this.$notify({
+        type: "warning",
+        message: "未查询到企业相关信息，不予办理。",
+      });
+      return;
+    }
     this.$router.push({
       name: "form",
     });

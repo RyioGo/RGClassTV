@@ -1,3 +1,4 @@
+<!-- eslint-disable @typescript-eslint/no-explicit-any -->
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 
@@ -6,6 +7,7 @@ import gftApi from "@/api/main";
 import { UserModule } from "@/store/module/user";
 
 import { orgType } from "@/types/submit";
+import { itemArrayType, resourceArrayType } from "@/types/select";
 
 import RGPicker from "@/components/RGPicker/index.vue";
 import RGUpload from "@/components/RGUpload/index.vue";
@@ -19,32 +21,35 @@ export default class SubmitView extends Vue {
   public user = UserModule;
   public formData = {
     flowId: this.storage.get("detail").flowId,
-    selectItem: this.storage.get("selectItem").toString(),
+    selectItem: this.storage.get("selectItem"),
     serviceObj: this.storage.get("detail").serviceObj,
-    applyObj: {
-      name: UserModule.userInfo.name,
-      sex: UserModule.userInfo.sex == "1" ? "男" : "女",
-      address: "",
-      certNo: UserModule.userInfo.idCard,
-      certType: "DZZZ_CERTIFTYPE",
-      phone: UserModule.userInfo.phone,
-      isAgent: "",
-      orgName: "",
-      orgCode: "",
-      orgType: "",
-      linkMan: UserModule.userInfo.name,
-      linkTelephone: UserModule.userInfo.phone,
-      linkEmail: "",
-      linkAddress: "",
-      linkMancertificateName: "DZZZ_CERTIFTYPE",
-      linkMancertificateNo: UserModule.userInfo.idCard,
-      legalPerson: "",
-      contactPhone: "",
-      certificateNo: "",
-      certificateName: "DZZZ_CERTIFTYPE",
-    },
+    applyObj: {},
     material: [],
     dataInfo: this.storage.get("form"),
+  };
+  public per = {
+    name: UserModule.userInfo.name,
+    sex: UserModule.userInfo.sex == "1" ? "男" : "女",
+    address: "",
+    certNo: UserModule.userInfo.idCard,
+    certType: "DZZZ_CERTIFTYPE",
+    phone: UserModule.userInfo.phone,
+    isAgent: "",
+  };
+  public enr = {
+    orgName: "",
+    orgType: "",
+    orgCode: "",
+    legalPerson: "",
+    certificateNo: "",
+    contactPhone: "",
+    linkEmail: "",
+    linkAddress: "",
+    linkMan: UserModule.userInfo.name,
+    linkTelephone: UserModule.userInfo.phone,
+    linkMancertificateName: "DZZZ_CERTIFTYPE",
+    certificateName: "DZZZ_CERTIFTYPE",
+    linkMancertificateNo: UserModule.userInfo.idCard,
   };
   public dataModel = this.storage.get("detail").itemArray;
   public orgList: Array<orgType> = [];
@@ -160,6 +165,19 @@ export default class SubmitView extends Vue {
   public pagenum = 3;
   public total = 0;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public fileSetParams(item: itemArrayType, it: resourceArrayType): any {
+    return {
+      resourceCode: it.resourceCode,
+      resourceType: it.resourceType,
+      itemId: item.itemId,
+      itemCode: item.itemCode,
+      fileName: it.resourceName + ".png",
+      filePath: "",
+      fileType: "1",
+    };
+  }
+
   public onSelect(item: orgType): void {
     // 默认情况下点击选项时不会自动收起
     // 可以通过 close-on-click-action 属性开启自动收起
@@ -167,27 +185,93 @@ export default class SubmitView extends Vue {
       this.pagenum += 3;
       this.getEntInfo();
     } else {
-      this.formData.applyObj.orgName = item.corname;
-      this.formData.applyObj.orgCode = item.cornumber;
-      this.formData.applyObj.legalPerson = item.corusername;
-      this.formData.applyObj.certificateNo = item.corusercardid;
+      this.enr.orgName = item.corname;
+      this.enr.orgCode = item.cornumber;
+      this.enr.legalPerson = item.corusername;
+      this.enr.certificateNo = item.corusercardid;
       this.showAction = false;
     }
   }
 
+  public async onSubmit(): Promise<void> {
+    try {
+      let material: any = [];
+
+      this.dataModel.forEach((item: itemArrayType) => {
+        item.resourceArray.forEach((it: resourceArrayType) => {
+          //  移除所有提交未通过的材料
+          let uploadFile: any = [];
+          it.uploadFile?.forEach((file) => {
+            if (file.status == "done") uploadFile.push(file);
+          });
+          it.uploadFile = uploadFile;
+          //  检验是否有漏填的数据
+          if (it.must == "1" && it.uploadFile?.length == 0) {
+            throw new Error(`请补全: ${it.resourceName}材料。 `);
+          }
+          //  将提交的数据并入材料清单
+          material = material.concat(
+            it.uploadFile?.map((file) => {
+              return file.data;
+            })
+          );
+        });
+      });
+      //  格式化选中事项
+      this.formData.selectItem = this.formData.selectItem.map(
+        (item: string) => {
+          return {
+            itemId: item,
+          };
+        }
+      );
+      //  插入证明材料数据
+      this.formData.material = material;
+      //  插入办件人员数据
+      this.formData.applyObj =
+        this.formData.serviceObj == "1" ? this.per : this.enr;
+
+      //  开始申报
+      let interface_id: string = this.storage.get("globalConfig").apis.ywsb;
+      this.$store.commit("loader/setOption", "发送提交数据...");
+      const res = await gftApi.getGate(interface_id, this.formData);
+      if (res && res.code == 200 && JSON.parse(res.data).state == 200) {
+        this.$store.commit("loader/setOption", "提交完成，即将返回首页！");
+        this.$notify({
+          type: "success",
+          message: "提交成功，请耐心等待审批通知！",
+          onClose: () => {
+            this.$store.commit("loader/setOption", false);
+            window.location.replace(this.storage.get("href"));
+          },
+        });
+      } else {
+        this.$store.commit("loader/setOption", false);
+        this.$notify({
+          type: "warning",
+          message: JSON.parse(res.data).error,
+        });
+      }
+    } catch (error: any) {
+      this.$notify({
+        type: "warning",
+        message: error.message || "证明材料未补全！",
+      });
+    }
+  }
+
   public async getEntInfo(): Promise<void> {
-    let interface_id: string = this.storage.get("globalConfig").api[2];
+    this.$store.commit("loader/setOption", "加载企业清单列表...");
+    let interface_id: string = this.storage.get("globalConfig").apis.qyqd;
     const res = await gftApi.getGate(interface_id, {
       params: {
-        token:
-          "09ed8ef8c7de4d83a28d17b352fa8d4c5d64840062d4483fa0afc42769c4044b" ||
-          UserModule.userInfo.token,
+        token: UserModule.userInfo.token,
         pageindex: this.pageindex + "",
         pagenum: this.pagenum + "",
       },
       servicename: "findCorporationByToken",
     });
-    if (res && res.code == 200) {
+    if (res && res.code == 200 && JSON.parse(res.data).state == 200) {
       res.data = JSON.parse(res.data);
       this.orgList = JSON.parse(res.data.data.list).map((item: orgType) => {
         return { name: item.corname, subname: item.cornumber, ...item };
@@ -207,6 +291,12 @@ export default class SubmitView extends Vue {
         });
       }
       this.total = res.data.data.count;
+    } else {
+      this.$store.commit("loader/setOption", false);
+      this.$notify({
+        type: "warning",
+        message: JSON.parse(res.data).message,
+      });
     }
   }
 
@@ -221,7 +311,7 @@ export default class SubmitView extends Vue {
 <template>
   <div class="rg-body">
     <div class="main">
-      <van-form>
+      <van-form @submit="onSubmit">
         <!-- 个人基本信息 -->
         <van-cell-group inset v-if="formData.serviceObj == 1">
           <van-cell title="申报个人信息" />
@@ -235,7 +325,7 @@ export default class SubmitView extends Vue {
           <van-field :value="user.forIdCard" readonly label="证件编号" />
           <van-field :value="user.forPhone" readonly label="联系电话" />
           <van-field
-            v-model="formData.applyObj.address"
+            v-model="per.address"
             rows="1"
             autosize
             label="联系地址"
@@ -247,7 +337,7 @@ export default class SubmitView extends Vue {
         <van-cell-group inset v-if="formData.serviceObj == 0">
           <van-cell title="申报法人信息" />
           <van-field
-            v-model="formData.applyObj.orgName"
+            v-model="enr.orgName"
             readonly
             label="机构名称"
             placeholder="请选择机构名称"
@@ -255,26 +345,26 @@ export default class SubmitView extends Vue {
             :rules="[{ required: true, message: '请选择机构名称' }]"
           />
           <van-field
-            v-model="formData.applyObj.orgCode"
+            v-model="enr.orgCode"
             label="机构编码"
             placeholder="请填写机构编码"
             :rules="[{ required: true, message: '请填写机构编码' }]"
           />
           <RGPicker
-            :value.sync="formData.applyObj.orgType"
+            :value.sync="enr.orgType"
             :localData="dictOrgType"
             label="机构类型"
             placeholder="请选择机构类型"
             :rules="[{ required: true, message: '请选择机构类型' }]"
           />
           <van-field
-            v-model="formData.applyObj.legalPerson"
+            v-model="enr.legalPerson"
             label="法人姓名"
             placeholder="请填写法人姓名"
             :rules="[{ required: true, message: '请填写法人姓名' }]"
           />
           <van-field
-            v-model="formData.applyObj.contactPhone"
+            v-model="enr.contactPhone"
             label="法人电话"
             placeholder="请填写法人电话"
             :rules="[{ required: true, message: '请填写法人电话' }]"
@@ -285,7 +375,7 @@ export default class SubmitView extends Vue {
             label="法人证件类型"
           />
           <van-field
-            v-model="formData.applyObj.certificateNo"
+            v-model="enr.certificateNo"
             label="法人证件编号"
             placeholder="请填写法人证件编号"
             :rules="[{ required: true, message: '请填写法人证件编号' }]"
@@ -314,12 +404,12 @@ export default class SubmitView extends Vue {
             placeholder="请填写联系电话"
           />
           <van-field
-            v-model="formData.applyObj.linkEmail"
+            v-model="enr.linkEmail"
             label="联系邮箱"
             placeholder="请填写联系邮箱"
           />
           <van-field
-            v-model="formData.applyObj.linkAddress"
+            v-model="enr.linkAddress"
             rows="1"
             autosize
             label="联系地址"
@@ -344,7 +434,10 @@ export default class SubmitView extends Vue {
                 {{ it.resourceName }}
               </template>
               <template #label>
-                <RGUpload :value.sync="it.uploadFile" />
+                <RGUpload
+                  :value.sync="it.uploadFile"
+                  :params="fileSetParams(item, it)"
+                />
               </template>
             </van-cell>
           </div>

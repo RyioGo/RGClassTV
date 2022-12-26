@@ -37,7 +37,7 @@ export default class RGHeader extends Vue {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: #00000052;
+    background-color: #00000023;
   }
   .cover {
     width: 100%;

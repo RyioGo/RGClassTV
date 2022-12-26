@@ -15,7 +15,7 @@ export default class RGPicker extends Vue {
   //  名称
   @Prop({ type: String, default: "" }) label!: string;
   //  规则
-  @Prop({ type: Array, default: [] }) rules!: [];
+  @Prop({ type: Array, default: () => [] }) rules!: [];
   //  双向绑定
   @PropSync("value", { type: [String, Number], required: true })
   data!: string | number;

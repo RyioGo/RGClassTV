@@ -6,8 +6,8 @@ import {
 } from "vuex-module-decorators";
 import store from "@/store";
 import utils from "@/libs/utils";
-
 import { userInfoType } from "@/types/user";
+import { storage } from "@/libs/plugin";
 
 // 属性一：module名称，开启命名空间后会以name为命名空间
 // 属性二：是否使用动态加载，简而言之只有在用到当前的module才会加载，详细可以看vuex官网。
@@ -15,15 +15,15 @@ import { userInfoType } from "@/types/user";
 // 属性四：挂载的store目标
 @Module({ namespaced: true, name: "user", dynamic: true, store })
 export default class User extends VuexModule {
-  public userInfo: userInfoType = {
+  public userInfo: userInfoType = storage.get("userInfo") || {
     token: "",
-    name: "qwe",
-    idCard: "1234sssssssss5",
-    phone: "09876",
-    sex: "1",
+    name: "",
+    idCard: "",
+    phone: "",
+    sex: "",
     appid: "",
   };
-  public isLogin = false;
+  public isLogin = storage.get("isLogin") || false;
 
   get forName(): string {
     return utils.getName(this.userInfo.name);
@@ -49,6 +49,8 @@ export default class User extends VuexModule {
   public setOption(data: userInfoType): void {
     this.isLogin = true;
     this.userInfo = data;
+    storage.set("isLogin", true);
+    storage.set("userInfo", data);
   }
 }
 

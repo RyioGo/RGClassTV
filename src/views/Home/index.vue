@@ -2,13 +2,12 @@
 import { Component, Vue, Watch } from "vue-property-decorator";
 import getList from "@/static/data/list";
 import userApi from "@/api/user";
-import utils from "@/libs/utils";
 import { arrItemType } from "@/types/home";
-
 import RGHeader from "@/components/RGHeader/index.vue";
 import Content from "@/components/Content/index.vue";
+import RGSign from "@/components/RGSign/index.vue";
 @Component({
-  components: { RGHeader, Content },
+  components: { RGHeader, Content, RGSign },
 })
 export default class HomeView extends Vue {
   public arrList: Array<arrItemType> = [];
@@ -23,10 +22,6 @@ export default class HomeView extends Vue {
   @Watch("keywords")
   private keywordsWatch(): void {
     this.getList(this.isTab);
-  }
-
-  public toEval(): void {
-    utils.toEval(this.storage.get("globalConfig").eval);
   }
 
   public toPath(item: arrItemType): void {
@@ -65,6 +60,7 @@ export default class HomeView extends Vue {
   }
 
   private created() {
+    this.storage.set("evalCode", "");
     userApi.getUserInfo();
   }
 }
@@ -73,6 +69,7 @@ export default class HomeView extends Vue {
 <template>
   <div class="rg-body">
     <RGHeader />
+    <RGSign />
     <div class="sticky">
       <van-cell-group inset>
         <van-search v-model="keywords" shape="round" placeholder="办事名称" />

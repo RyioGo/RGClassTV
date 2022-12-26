@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import RGApi from "@/api/service";
+import gftApi from "./main";
 import utils from "@/libs/utils";
 import { storage } from "@/libs/plugin";
 import { UserModule } from "@/store/module/user";
@@ -28,7 +29,8 @@ export default {
             sex: res.data.sex,
             appid: appid,
           });
-          //this.getEnterprise();
+          storage.set("href", window.location.href);
+          this.getEnterprise();
         } else {
           Notify({ type: "warning", message: res.msg });
         }
@@ -56,5 +58,25 @@ export default {
         });
       }
     });
+  },
+  getEnterprise(): void {
+    const interface_id: string = storage.get("globalConfig").apis.qyxx;
+    gftApi
+      .getGate(interface_id, {
+        params: JSON.stringify({
+          token: UserModule.userInfo.token,
+        }),
+      })
+      .then((res) => {
+        if (res && res.code == 200) {
+          res.data = JSON.parse(res.data);
+          storage.set("eToken", res.data.data.token);
+          storage.set("eRefreshtoken", res.data.data.refreshtoken);
+        }
+      })
+      .catch((e) => {
+        storage.set("eToken", "");
+        console.log(e);
+      });
   },
 };

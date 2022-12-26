@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { toEvalOptionsType } from "@/types/utils";
 
 class UtilsClient {
@@ -27,49 +28,6 @@ class UtilsClient {
     }
     return theRequest;
   }
-  //压缩方法
-  dealImage(base64: string, w: number, callback: (arg: string) => void) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const newImage: any = new Image();
-    let quality = 0.9; //压缩系数0-1之间
-    newImage.src = base64;
-    newImage.setAttribute("crossOrigin", "Anonymous"); //url为外域时需要
-    let imgWidth, imgHeight;
-    newImage.onload = function () {
-      imgWidth = this.width;
-      imgHeight = this.height;
-      const canvas = document.createElement("canvas");
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const ctx: any = canvas.getContext("2d");
-      if (Math.max(imgWidth, imgHeight) > w) {
-        if (imgWidth > imgHeight) {
-          canvas.width = w;
-          canvas.height = (w * imgHeight) / imgWidth;
-        } else {
-          canvas.height = w;
-          canvas.width = (w * imgWidth) / imgHeight;
-        }
-      } else {
-        canvas.width = imgWidth;
-        canvas.height = imgHeight;
-        quality = 0.6;
-      }
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(this, 0, 0, canvas.width, canvas.height);
-      const base64 = canvas.toDataURL("image/jpeg", quality); //压缩语句
-      //如想确保图片压缩到自己想要的尺寸,如要求在50-150kb之间，请加以下语句，quality初始值根据情况自定
-      /*       while (base64.length / 1024 > 150) {
-        quality -= 0.01;
-        base64 = canvas.toDataURL("image/jpeg", quality);
-      }
-      //防止最后一次压缩低于最低尺寸，只要quality递减合理，无需考虑
-      while (base64.length / 1024 < 50) {
-        quality += 0.001;
-        base64 = canvas.toDataURL("image/jpeg", quality);
-      } */
-      callback(base64); //必须通过回调函数返回，否则无法及时拿到该值
-    };
-  }
   getStr(beginLen: number, endLen: number, max = 999) {
     // 这里用了闭包，闭包用完后需手动释放内存
     return function (str: string) {
@@ -81,7 +39,6 @@ class UtilsClient {
       return firstStr + middleStr + lastStr;
     };
   }
-
   getName(str: string) {
     let getResult = null;
     switch (str.length) {
@@ -110,6 +67,61 @@ class UtilsClient {
     const tel = getResult(phone);
     getResult = null; // 闭包-需手动释放
     return tel;
+  }
+
+  /**
+   * 图片压缩和尺寸裁剪
+   * @param base64        {base64}      图片文件
+   * @param quality       {Number}    生成图片质量，0.0~1.0之间，质量越小、文件越小、图片越模糊
+   * @param callback      {Function}  回调方法，参数为原文件(小于阈值的情况下)或压缩后的新文件
+   * @param targetWidth   {Number}    [可选]生成图片的宽度，单位：px，默认800
+   * @param targetHeight  {Number}    [可选]生成图片的高度，单位：px，默认值按宽度自适应获取
+   */
+  dealImage(
+    base64: string,
+    callback: (arg0: any) => void,
+    quality = 0.7,
+    targetWidth = 800,
+    targetHeight = null
+  ) {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    const that = this;
+    const image = new Image();
+    image.src = base64;
+    image.onload = function () {
+      const canvas = document.createElement("canvas");
+      const context = canvas.getContext("2d") as CanvasRenderingContext2D;
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const scale = this.width / this.height;
+      canvas.width = targetWidth;
+      canvas.height = targetHeight || targetWidth / scale;
+      context.drawImage(image, 0, 0, canvas.width, canvas.height);
+      const dataURL = canvas.toDataURL("image/png", quality);
+      const newFile = that.base64ToFile(dataURL, Date.now() + "png");
+      callback(newFile);
+    };
+  }
+
+  /**
+   * Base64转File
+   * @param dataURL   {String}  base64
+   * @param fileName	{String}  文件名
+   * @param mimeType	{String}  [可选]文件类型，默认为base64中的类型
+   * @returns {File}
+   */
+  base64ToFile(dataURL: string, fileName: string, mimeType = null) {
+    const arr = dataURL.split(",");
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const defaultMimeType = arr[0].match(/:(.*?);/)[1];
+    const bStr = atob(arr[1]);
+    let n = bStr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bStr.charCodeAt(n);
+    }
+    return new File([u8arr], fileName, { type: mimeType || defaultMimeType });
   }
 }
 

@@ -313,6 +313,7 @@ const list: any = {
       flowId: "D48D700D617D46FFB07B459CF16AC5B8",
       flowName: "二手房转移登记及水电气联动过户",
       img: "bdczydjjsdqldgh.png",
+      formId: "bdcdjslsqs",
       serviceObj: "1",
     },
     {
@@ -411,6 +412,7 @@ const list: any = {
       flowId: "D55CA91A94FD42E199E07BE1F14A839C",
       flowName: "不动产继承“公证+登记”",
       img: "bdczydjjsdqldgh.png",
+      formId: "bdcdjslsqs",
       serviceObj: "1",
     },
     {
@@ -446,6 +448,7 @@ const list: any = {
       flowId: "F48671F75C6842BCAA064D72896FF6C1",
       flowName: "不动产抵押注销登记",
       img: "bdcdj.png",
+      formId: "bdczxdj",
       serviceObj: "1",
     },
     {
@@ -453,6 +456,7 @@ const list: any = {
       flowId: "D32F7D5D371544A18C104E97B4323DE6",
       flowName: "不动产抵押登记",
       img: "bdcdj.png",
+      formId: "bdcdydj",
       serviceObj: "1",
     },
     {
@@ -811,6 +815,7 @@ const list: any = {
       flowId: "9D01C6FA9BC04316B4DEFA87B935392B",
       flowName: "二手房转移登记及水电气联动过户",
       img: "bdczydjjsdqldgh.png",
+      formId: "bdcdjslsqs",
       serviceObj: "1",
     },
     {
@@ -883,6 +888,7 @@ const list: any = {
       flowId: "9C8CC689FF2F48AE81EB491AF81CF3B3",
       flowName: "二手房转移登记及水电气联动过户",
       img: "bdczydjjsdqldgh.png",
+      formId: "bdcdjslsqs",
       serviceObj: "1",
     },
     {
@@ -1227,6 +1233,7 @@ const list: any = {
       flowId: "270432E79160465586989BFB20CE8C09",
       flowName: "二手房转移登记及水电气联动过户",
       img: "bdczydjjsdqldgh.png",
+      formId: "bdcdjslsqs",
       serviceObj: "1",
     },
     {

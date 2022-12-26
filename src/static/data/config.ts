@@ -5,10 +5,17 @@ const globalConfig: any = {
     gateUrl: "/api-gateway/jpaas-jags-server/interface/gateway.do",
     userUrl: "/jmportalgft/interfaces/getUserInfoByTicket.do",
     tokenUrl: "/jxtyyh/interfaces/jis/getTicket.do",
-
+    apis: {
+      qyxx: "grlphfrlp",
+      bjxx: "ltjd",
+      bjxz: "hqsbxx",
+      sczmcl: "xwptjcl",
+      qyqd: "gjlphqxx",
+      ywsb: "ywsb",
+    },
     eval: {
       appCode: "xysyjs",
-      appName: "新余市一件事",
+      appName: "新余市一件事一次办",
       appRegCode: "360500000000",
       appRegName: "江西省新余市",
       abilityCode: "0272a09bed4140f2844579aacf01ef4f",
@@ -23,7 +30,14 @@ const globalConfig: any = {
     tokenUrl: "/jxtyyh/interfaces/jis/getTicket.do",
     signUrl: "/api-gateway/jpaas-jags-server/interface/createsign",
     gateUrl: "/api-gateway/jpaas-jags-server/interface/gateway.do",
-    api: ["gjuhidiuwqhuhbj", "hqywsbxx", "fyxlphqqyxx", "wjsc"],
+    apis: {
+      qyxx: "fyxgrlphfrlp",
+      bjxx: "gjuhidiuwqhuhbj",
+      bjxz: "hqywsbxx",
+      sczmcl: "wjsc",
+      qyqd: "fyxlphqqyxx",
+      ywsb: "fyywsb",
+    },
     eval: {
       appCode: "fyxyjsycb",
       appName: "分宜县一件事一次办",
@@ -41,7 +55,14 @@ const globalConfig: any = {
     gateUrl: "/api-gateway/jpaas-jags-server/interface/gateway.do",
     userUrl: "/jmportalgft/interfaces/getUserInfoByTicket.do",
     tokenUrl: "/jxtyyh/interfaces/jis/getTicket.do",
-
+    apis: {
+      qyxx: "xnhqgrhfrlp",
+      bjxx: "xnhqgjyzjdhqqxfz",
+      bjxz: "xnhqhqsbxx",
+      sczmcl: "xnhqwpsc",
+      qyqd: "xnhqlphqqyxx",
+      ywsb: "xnvywsb",
+    },
     eval: {
       appCode: "xnhqyjsycb",
       appName: "仙女湖区一件事一次办",
@@ -59,7 +80,14 @@ const globalConfig: any = {
     gateUrl: "/api-gateway/jpaas-jags-server/interface/gateway.do",
     userUrl: "/jmportalgft/interfaces/getUserInfoByTicket.do",
     tokenUrl: "/jxtyyh/interfaces/jis/getTicket.do",
-
+    apis: {
+      qyxx: "ysqgrhfrlp",
+      bjxx: "ysqgjyzjdhqqxfz",
+      bjxz: "ysqhqsbxx",
+      sczmcl: "ysqwpsc",
+      qyqd: "ysqlphqqqxx",
+      ywsb: "ysqywsb",
+    },
     eval: {
       appCode: "ysqyjsycb",
       appName: "渝水区一件事一次办",
@@ -70,7 +98,7 @@ const globalConfig: any = {
     },
     appid: "ysqystbytkoj",
     provider: "本服务由渝水区政务服务中心提供",
-    cover: require("@/static/img/fy.jpg"),
+    cover: require("@/static/img/ys.jpg"),
   },
 };
 

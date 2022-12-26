@@ -61,7 +61,6 @@ export default {
         },
       });
     } catch (error) {
-      debugger;
       Notify({ type: "warning", message: "验签未通过，请稍后重试！" });
     }
   },

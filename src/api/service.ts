@@ -6,6 +6,7 @@ const RGApi: HttpClient = new HttpClient(defaultConfig(), {
   UseRequest,
   UseResponse,
 });
+
 //  客户端请求配置
 function defaultConfig(): AxiosRequestConfig {
   const { NODE_ENV, VUE_APP_BASE_API, VUE_APP_API } = process.env;

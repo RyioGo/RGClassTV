@@ -2,6 +2,7 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import gftApi from "@/api/main";
+import userApi from "@/api/user";
 
 import {
   selectDataType,
@@ -84,7 +85,7 @@ export default class SelectView extends Vue {
         throw new Error(`请选择待办理事项！`);
       }
 
-      let interface_id: string = this.storage.get("globalConfig").api[1];
+      let interface_id: string = this.storage.get("globalConfig").apis.bjxz;
 
       this.$store.commit("loader/setOption", "生成办件须知...");
       const res = await gftApi.getGate(interface_id, {
@@ -113,7 +114,7 @@ export default class SelectView extends Vue {
   }
 
   private async getStatusItemGroups() {
-    let interface_id: string = this.storage.get("globalConfig").api[0];
+    let interface_id: string = this.storage.get("globalConfig").apis.bjxx;
 
     this.$store.commit("loader/setOption", "加载申报内容...");
     const res = await gftApi.getGate(interface_id, {
@@ -138,6 +139,7 @@ export default class SelectView extends Vue {
           }
         ),
       };
+      this.storage.set("evalCode", "  " + this.selectData.flowName + "事项");
       this.storage.set("selectData", this.selectData);
       this.$store.commit("loader/setOption", false);
     } else {
@@ -146,6 +148,7 @@ export default class SelectView extends Vue {
   }
 
   private created() {
+    userApi.getUserInfo();
     this.getStatusItemGroups();
   }
 }
@@ -167,7 +170,7 @@ export default class SelectView extends Vue {
           left-icon="info-o"
           style="font-size: 12px"
         >
-          单选条件，如未选择办件事项则会默认选择首项。
+          单选业务，如未选择办件事项则会默认选择首项。
         </van-notice-bar>
       </van-cell-group>
       <van-cell-group inset :border="false" style="margin-top: 12px">

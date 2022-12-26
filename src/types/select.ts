@@ -62,5 +62,12 @@ export interface resourceArrayType {
   resourceName: string;
   resourceType: string;
   typeValue: string;
-  uploadFile?: Array<string>;
+  uploadFile?: Array<uploadFileType>;
+}
+
+export interface uploadFileType {
+  status: string;
+  message: string;
+  data: any;
+  file: File;
 }
