@@ -27,6 +27,13 @@ module.exports = {
           ["^" + process.env.VUE_APP_BASE_API]: "/",
         },
       },
+      /*       [process.env.VUE_APP_BASE_API]: {
+        target: "http://txb.xysstgs.com:8086" || process.env.VUE_APP_API,
+        changeOrigin: true,
+        pathRewrite: {
+          ["^" + process.env.VUE_APP_BASE_API]: "/",
+        },
+      }, */
     },
   },
 };

@@ -20,9 +20,14 @@ export default {
       headers,
     });
   },
-  async getGate(key: string, params: any, headers?: any): Promise<any> {
+  async getGate(
+    key: string,
+    params: any,
+    headers?: any,
+    config: any = {}
+  ): Promise<any> {
     //  配置赣服通参数
-    const data = defaultData(key, params);
+    const data = defaultData(key, params, headers);
     //  获取赣服通签名
     try {
       const res = await this.getSign(data);
@@ -31,7 +36,7 @@ export default {
         method: "post",
         url: storage.get("globalConfig").gateUrl,
         data,
-        headers,
+        ...config,
       });
     } catch (error) {
       Notify({ type: "warning", message: "验签未通过，请稍后重试！" });

@@ -18,7 +18,8 @@ router.beforeEach((to: Route, from: Route, next) => {
 });
 
 router.afterEach((to: Route, from: Route) => {
-  console.log(to, from);
+  window.scrollTo(0, 0);
+  console.log({ to, from });
 });
 
 export default router;

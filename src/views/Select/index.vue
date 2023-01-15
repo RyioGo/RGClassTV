@@ -4,6 +4,8 @@ import { Component, Vue } from "vue-property-decorator";
 import gftApi from "@/api/main";
 import userApi from "@/api/user";
 
+import apiData from "@/static/data/apiData";
+
 import {
   selectDataType,
   selectDataItemType,
@@ -24,7 +26,7 @@ export default class SelectView extends Vue {
     data: [],
     formId: "",
   };
-  public isOpen: Array<number> = [];
+  public isOpen: Array<string> = [];
 
   public boxs: any = {};
 
@@ -103,8 +105,15 @@ export default class SelectView extends Vue {
             return item;
           }
         );
-        this.storage.set("selectItem", selectItem);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const moreData: any = apiData[process.env.VUE_APP_CITY];
+        if (moreData && moreData[this.$route.query.flowId as string]) {
+          res.data.info.itemArray = res.data.info.itemArray.concat(
+            moreData[this.$route.query.flowId as string].detail
+          );
+        }
         this.storage.set("detail", res.data.info);
+        this.storage.set("selectItem", selectItem);
         this.$store.commit("loader/setOption", false);
         this.$router.push({ name: "detail" });
       }
@@ -128,20 +137,35 @@ export default class SelectView extends Vue {
         flowName: res.data.flowName,
         serviceObj: res.data.serviceObj,
         isOneForm: res.data.isOneForm,
-        data: res.data.info.map(
-          (item: selectDataItemType<itemsType>, index: number) => {
-            // 按事项选择方式初始化备选事项清单类型
-            item.select = item.statusMode == "0" ? "" : [];
-            // 配置默认展开的折叠面板
-            this.isOpen[index] = index;
-            // 返回本次配置
-            return item;
-          }
-        ),
+        data: res.data.info.map((item: selectDataItemType<itemsType>) => {
+          // 按事项选择方式初始化备选事项清单类型
+          item.select = item.statusMode == "0" ? "" : [];
+          // 配置默认展开的折叠面板
+          this.isOpen.push(item.statusName);
+          // 返回本次配置
+          return item;
+        }),
       };
-      this.storage.set("evalCode", "  " + this.selectData.flowName + "事项");
+      this.storage.set("evalCode", "  " + this.selectData.flowName);
       this.storage.set("selectData", this.selectData);
       this.$store.commit("loader/setOption", false);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const moreData: any = apiData[process.env.VUE_APP_CITY];
+      if (moreData && moreData[this.$route.query.flowId as string]) {
+        this.selectData.data = moreData[
+          this.$route.query.flowId as string
+        ].select.map((item: selectDataItemType<itemsType>) => {
+          // 按事项选择方式初始化备选事项清单类型
+          item.select = item.statusMode == "0" ? "" : [];
+          // 配置默认展开的折叠面板
+          this.isOpen.push(item.statusName);
+          // 返回本次配置
+          return item;
+        });
+        this.$nextTick(() => {
+          this.allSelect();
+        });
+      }
     } else {
       this.$notify({ type: "warning", message: res.msg });
     }
@@ -178,7 +202,7 @@ export default class SelectView extends Vue {
           <van-collapse-item
             v-for="(item, index) in selectData.data"
             :key="index"
-            :name="index"
+            :name="item.statusName"
           >
             <template #title>
               <div>

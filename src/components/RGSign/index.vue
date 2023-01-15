@@ -1,6 +1,8 @@
 <script lang="ts">
 import { Component, Ref, Vue } from "vue-property-decorator";
 import SignaturePad from "signature_pad";
+
+import utils from "@/libs/utils";
 @Component
 export default class RGSign extends Vue {
   @Ref("signRef") signRef!: HTMLCanvasElement;
@@ -8,10 +10,14 @@ export default class RGSign extends Vue {
   public signCan: SignaturePad | null = null;
 
   public ok(): void {
-    const pass = this.signCan?.isEmpty();
-    if (pass) {
-      console.log();
-    }
+    //const data = this.signCan?.toData() as Array<PointGroup>;
+    utils.rotateBase64Img(
+      this.signCan?.toDataURL() as string,
+      -90,
+      (base: string) => {
+        console.log(base);
+      }
+    );
   }
 
   public clear(): void {
@@ -21,7 +27,9 @@ export default class RGSign extends Vue {
   private mounted() {
     this.signRef.width = document.body.clientWidth;
     this.signRef.height = document.body.clientHeight;
-    this.signCan = new SignaturePad(this.signRef);
+    this.signCan = new SignaturePad(this.signRef, {
+      backgroundColor: "rgba(0,0,0,0)",
+    });
   }
 }
 </script>

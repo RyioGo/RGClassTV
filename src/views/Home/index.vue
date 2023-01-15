@@ -5,9 +5,9 @@ import userApi from "@/api/user";
 import { arrItemType } from "@/types/home";
 import RGHeader from "@/components/RGHeader/index.vue";
 import Content from "@/components/Content/index.vue";
-import RGSign from "@/components/RGSign/index.vue";
+
 @Component({
-  components: { RGHeader, Content, RGSign },
+  components: { RGHeader, Content },
 })
 export default class HomeView extends Vue {
   public arrList: Array<arrItemType> = [];
@@ -69,7 +69,6 @@ export default class HomeView extends Vue {
 <template>
   <div class="rg-body">
     <RGHeader />
-    <RGSign />
     <div class="sticky">
       <van-cell-group inset>
         <van-search v-model="keywords" shape="round" placeholder="办事名称" />

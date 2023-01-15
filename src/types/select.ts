@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface selectDataType<T> {
   flowName: string;
   data: Array<T>;
@@ -50,6 +51,8 @@ export interface itemArrayType {
   orgName: string;
   passType: string;
   resultName: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  AuthCath?: any;
 }
 
 export interface conditionType {
@@ -63,11 +66,14 @@ export interface resourceArrayType {
   resourceType: string;
   typeValue: string;
   uploadFile?: Array<uploadFileType>;
+  licenceCode: string;
+  licenceName: string;
 }
 
 export interface uploadFileType {
+  content?: string;
   status: string;
   message: string;
   data: any;
-  file: File;
+  file?: File;
 }

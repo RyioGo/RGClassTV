@@ -14,6 +14,12 @@ const baseRoutes: Array<RouteConfig> = [
       import(/* webpackChunkName: "select" */ "@/views/Select/index.vue"),
   },
   {
+    path: "/worker",
+    name: "worker",
+    component: () =>
+      import(/* webpackChunkName: "worker" */ "@/views/Worker/index.vue"),
+  },
+  {
     path: "/detail",
     name: "detail",
     component: () =>
@@ -24,6 +30,12 @@ const baseRoutes: Array<RouteConfig> = [
     name: "form",
     component: () =>
       import(/* webpackChunkName: "form" */ "@/views/Form/index.vue"),
+  },
+  {
+    path: "/sign",
+    name: "sign",
+    component: () =>
+      import(/* webpackChunkName: "form" */ "@/views/Sign/index.vue"),
   },
   {
     path: "/submit",

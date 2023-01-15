@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { toEvalOptionsType } from "@/types/utils";
 
@@ -69,6 +70,86 @@ class UtilsClient {
     return tel;
   }
 
+  rotateBase64Img(
+    src: string,
+    edg: number,
+    callback: (arg0: string) => void
+  ): void {
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+
+    let imgW; //图片宽度
+    let imgH; //图片高度
+    let size; //canvas初始大小
+
+    if (edg % 90 != 0) {
+      console.error("旋转角度必须是90的倍数!");
+      throw "旋转角度必须是90的倍数!";
+    }
+    edg < 0 && (edg = (edg % 360) + 360);
+    const quadrant = (edg / 90) % 4; //旋转象限
+    const cutCoor = { sx: 0, sy: 0, ex: 0, ey: 0 }; //裁剪坐标
+
+    const image = new Image();
+    image.crossOrigin = "anonymous";
+    image.src = src;
+
+    image.onload = function () {
+      imgW = image.width;
+      imgH = image.height;
+      size = imgW > imgH ? imgW : imgH;
+
+      canvas.width = size * 2;
+      canvas.height = size * 2;
+      switch (quadrant) {
+        case 0:
+          cutCoor.sx = size;
+          cutCoor.sy = size;
+          cutCoor.ex = size + imgW;
+          cutCoor.ey = size + imgH;
+          break;
+        case 1:
+          cutCoor.sx = size - imgH;
+          cutCoor.sy = size;
+          cutCoor.ex = size;
+          cutCoor.ey = size + imgW;
+          break;
+        case 2:
+          cutCoor.sx = size - imgW;
+          cutCoor.sy = size - imgH;
+          cutCoor.ex = size;
+          cutCoor.ey = size;
+          break;
+        case 3:
+          cutCoor.sx = size;
+          cutCoor.sy = size - imgW;
+          cutCoor.ex = size + imgH;
+          cutCoor.ey = size + imgW;
+          break;
+      }
+
+      ctx.translate(size, size);
+      ctx.rotate((edg * Math.PI) / 180);
+      ctx.drawImage(image, 0, 0);
+
+      const imgData = ctx.getImageData(
+        cutCoor.sx,
+        cutCoor.sy,
+        cutCoor.ex,
+        cutCoor.ey
+      );
+      if (quadrant % 2 == 0) {
+        canvas.width = imgW;
+        canvas.height = imgH;
+      } else {
+        canvas.width = imgH;
+        canvas.height = imgW;
+      }
+      ctx.putImageData(imgData, 0, 0);
+      callback(canvas.toDataURL());
+    };
+  }
+
   /**
    * 图片压缩和尺寸裁剪
    * @param base64        {base64}      图片文件
@@ -79,7 +160,6 @@ class UtilsClient {
    */
   dealImage(
     base64: string,
-    callback: (arg0: any) => void,
     quality = 0.7,
     targetWidth = 800,
     targetHeight = null
@@ -99,7 +179,7 @@ class UtilsClient {
       context.drawImage(image, 0, 0, canvas.width, canvas.height);
       const dataURL = canvas.toDataURL("image/png", quality);
       const newFile = that.base64ToFile(dataURL, Date.now() + "png");
-      callback(newFile);
+      return Promise.resolve(newFile);
     };
   }
 
@@ -110,7 +190,7 @@ class UtilsClient {
    * @param mimeType	{String}  [可选]文件类型，默认为base64中的类型
    * @returns {File}
    */
-  base64ToFile(dataURL: string, fileName: string, mimeType = null) {
+  base64ToFile(dataURL: string, fileName: string, mimeType?: string) {
     const arr = dataURL.split(",");
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -122,6 +202,36 @@ class UtilsClient {
       u8arr[n] = bStr.charCodeAt(n);
     }
     return new File([u8arr], fileName, { type: mimeType || defaultMimeType });
+  }
+  //
+  getFileFromUrl(url: string, fileName: string) {
+    return new Promise((resolve, reject) => {
+      let blob = null;
+      let xhr = new XMLHttpRequest();
+      xhr.open("GET", url);
+      xhr.setRequestHeader("Accept", "*/*");
+      xhr.responseType = "blob";
+      // 加载时处理
+      xhr.onload = () => {
+        // 获取返回结果
+        blob = xhr.response;
+        let file = new File([blob], fileName, { type: "image/png" });
+        // 返回结果
+        resolve(file);
+      };
+      xhr.onerror = (e) => {
+        reject(e);
+      };
+      // 发送
+      xhr.send();
+    });
+  }
+  blobToBase64(blob: Blob | File, callback: any) {
+    const reader = new FileReader();
+    reader.addEventListener("load", () => {
+      callback(reader.result);
+    });
+    reader.readAsDataURL(blob);
   }
 }
 

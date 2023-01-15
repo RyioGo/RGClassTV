@@ -4,13 +4,16 @@ import { Component, Vue } from "vue-property-decorator";
 
 import gftApi from "@/api/main";
 
+import utils from "@/libs/utils";
+
 import { UserModule } from "@/store/module/user";
 
-import { orgType } from "@/types/submit";
+import { orgType, authCardType } from "@/types/submit";
 import { itemArrayType, resourceArrayType } from "@/types/select";
 
 import RGPicker from "@/components/RGPicker/index.vue";
 import RGUpload from "@/components/RGUpload/index.vue";
+
 @Component({
   components: {
     RGPicker,
@@ -25,7 +28,7 @@ export default class SubmitView extends Vue {
     serviceObj: this.storage.get("detail").serviceObj,
     applyObj: {},
     material: [],
-    dataInfo: this.storage.get("form"),
+    dataInfo: this.storage.get("dataInfo"),
   };
   public per = {
     name: UserModule.userInfo.name,
@@ -164,7 +167,11 @@ export default class SubmitView extends Vue {
   public pageindex = 1;
   public pagenum = 3;
   public total = 0;
-
+  //  电子证照
+  public authCardList: Array<authCardType> = [];
+  public showAuthCard = false;
+  public useAuthDesc = "";
+  public uploadData: any = {};
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public fileSetParams(item: itemArrayType, it: resourceArrayType): any {
     return {
@@ -172,7 +179,7 @@ export default class SubmitView extends Vue {
       resourceType: it.resourceType,
       itemId: item.itemId,
       itemCode: item.itemCode,
-      fileName: it.resourceName + ".png",
+      fileName: it.resourceName,
       filePath: "",
       fileType: "1",
     };
@@ -196,7 +203,6 @@ export default class SubmitView extends Vue {
   public async onSubmit(): Promise<void> {
     try {
       let material: any = [];
-
       this.dataModel.forEach((item: itemArrayType) => {
         item.resourceArray.forEach((it: resourceArrayType) => {
           //  移除所有提交未通过的材料
@@ -300,10 +306,134 @@ export default class SubmitView extends Vue {
     }
   }
 
+  //  根据事项请求电子证照
+  public electronic(): void {
+    this.dataModel.forEach(async (item: itemArrayType, key: number) => {
+      //  加入返回的证照清单
+      item.AuthCath = await this.getLicense(item);
+      //  在请求最后一项证照清单时关闭loading
+      if (key + 1 == this.dataModel.length) {
+        this.$store.commit("loader/setOption", false);
+      }
+      //  依次按顺序取出证照清单对应码
+      let codes: Array<string> = item.AuthCath.map(
+        (auth: authCardType) => auth.license_item_code
+      );
+      //  材料清单
+      item.resourceArray.forEach((it: resourceArrayType) => {
+        if (it.licenceCode && it.licenceName) {
+          //  根据事项的 licenceCode 匹配对应的证照下标
+          let authKey = codes.indexOf(it.licenceCode);
+          //  调用电子证照归档获取pdf
+          if (authKey >= 0) {
+            this.getAuthArchive(
+              item.AuthCath[authKey].auth_code,
+              (base: string) => {
+                it.uploadFile?.push({
+                  content: base,
+                  status: "done",
+                  message: "上传完成",
+                  data: {
+                    resourceCode: it.resourceCode,
+                    resourceType: it.resourceType,
+                    itemId: item.itemId,
+                    itemCode: item.itemCode,
+                    fileName: it.resourceName,
+                    filePath: item.AuthCath[authKey].auth_code,
+                    fileType: "2",
+                  },
+                  file: utils.base64ToFile(base, it.resourceName),
+                });
+              }
+            );
+          }
+        }
+      });
+    });
+  }
+  //  获取证照
+  private async getLicense(item: itemArrayType): Promise<Array<authCardType>> {
+    let interface_id: string = this.storage.get("globalConfig").apis.dzzzczryz;
+    this.$store.commit("loader/setOption", `获取证照信息...`);
+    const res = await gftApi.getGate(interface_id, {
+      service_item_code: item.itemCode,
+      service_item_name: item.itemName,
+      service_item_org: item.orgName,
+      id_code: UserModule.userInfo.idCard,
+      code: "123456789",
+      cas_type: "0",
+    });
+    if (res && res.code == 200) {
+      res.data = JSON.parse(res.data);
+      //  组合证照编码数据
+      res.data.data.forEach((auth: authCardType, k: number) => {
+        auth["auth_code"] = res.data.auth_codes[k];
+      });
+      //  返回重组后的数据
+      return Promise.resolve(res.data.data);
+    } else {
+      return Promise.resolve([]);
+    }
+  }
+  //  证照归档
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  public async getAuthArchive(auth_code: string, callback: any): Promise<void> {
+    let interface_id: string = this.storage.get("globalConfig").apis.dzzzgdwj;
+    this.$store.commit("loader/setOption", `获取证照信息...`);
+    const res = await gftApi.getGate(interface_id, {
+      auth_code,
+    });
+    if (res && res.code == 200) {
+      res.data = JSON.parse(res.data);
+      //  pdf转图片
+      this.pdftoimg(res.data.data.data.file_data, callback);
+    }
+    this.$store.commit("loader/setOption", false);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  public pdftoimg(base64: string, callback: any) {
+    // base64和url皆可
+    let base64Str = "data:application/pdf;base64," + base64;
+
+    let loadingTask = this.pdfjs.getDocument({
+      url: base64Str,
+      cMapPacked: true, // 解决图片没有汉字的问题
+    });
+    loadingTask.promise.then(function (pdf: any) {
+      //  默认pdf转换页码
+      let page = 0;
+      while (page < pdf.numPages) {
+        pdf.getPage(page + 1).then((res: any) => {
+          let viewport = res.getViewport({
+            scale: 1,
+            rotation: 0,
+            offsetX: 0,
+            offsetY: 0,
+            dontFlip: false,
+          }); // 默认会旋转180度需要设置回来rotation：0
+          let canvas = document.createElement("canvas");
+          let context = canvas.getContext("2d");
+          canvas.height = viewport.height;
+          canvas.width = viewport.width;
+          let renderTask = res.render({
+            canvasContext: context,
+            viewport: viewport,
+          });
+          renderTask.promise.then(() => {
+            callback(canvas.toDataURL("image/png", 1));
+          });
+        });
+        page++;
+      }
+    });
+  }
+
   private created() {
     if (this.storage.get("detail").serviceObj == 0) {
       this.getEntInfo();
     }
+    this.electronic();
   }
 }
 </script>

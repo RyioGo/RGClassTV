@@ -11,6 +11,13 @@ import RGFooter from "@/components/RGFooter/index.vue";
 //  站点配置
 import globalConfig from "@/static/data/config";
 import pinyin from "pinyin";
+//  三方插件
+import * as PDFJS from "pdfjs-dist";
+PDFJS.GlobalWorkerOptions.workerSrc =
+  "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.5.207/pdf.worker.js";
+//  剪贴板功能
+import vueclipboard from "vue-clipboard2";
+
 //  移动端调试器
 // import VConsole from "vconsole";
 // new VConsole();
@@ -24,6 +31,7 @@ export const storage: StorageClient = new StorageClient({
 export default (): void => {
   //  全局挂载
   Vue.prototype.storage = storage;
+  Vue.prototype.pdfjs = PDFJS;
   Vue.prototype.pinyin = (str: string) => {
     return pinyin(str, {
       compact: true,
@@ -33,6 +41,7 @@ export default (): void => {
 
   //  全局注册
   Vue.use(Vant);
+  Vue.use(vueclipboard);
   Vue.component("RGLoader", RGLoader);
   Vue.component("RGEval", RGEval);
   Vue.component("RGFooter", RGFooter);

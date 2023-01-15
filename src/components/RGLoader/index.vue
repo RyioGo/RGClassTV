@@ -11,8 +11,8 @@ export default class RGLoader extends Vue {
 </script>
 
 <template>
-  <div class="rg-loading" v-if="show">
-    <div class="rg-loading_container">
+  <div class="rg-loading" v-if="show" @touchmove.prevent>
+    <div class="rg-loading_container" @touchmove.prevent>
       <div class="rg-loading_loader"></div>
       <div class="rg-loading_text">{{ desc }}</div>
     </div>

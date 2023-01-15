@@ -1,5 +1,5 @@
 export default {
-  bdcdjslsqs: {
+  bdcdjsl: {
     DengJiDaLei: [
       {
         text: "转移登记",
@@ -897,6 +897,80 @@ export default {
         value: "抵押权人代理人",
       },
     ],
+    QLRXZ: [
+      {
+        text: "个人",
+        value: "1",
+      },
+      {
+        text: "企业",
+        value: "2",
+      },
+      {
+        text: "事业单位",
+        value: "3",
+      },
+      {
+        text: "国家机关",
+        value: "4",
+      },
+      {
+        text: "国有",
+        value: "5",
+      },
+      {
+        text: "合资",
+        value: "6",
+      },
+      {
+        text: "事业",
+        value: "7",
+      },
+      {
+        text: "股份",
+        value: "8",
+      },
+      {
+        text: "集体",
+        value: "9",
+      },
+      {
+        text: "外资",
+        value: "10",
+      },
+      {
+        text: "有限责任",
+        value: "11",
+      },
+      {
+        text: "私有",
+        value: "12",
+      },
+      {
+        text: "机关",
+        value: "13",
+      },
+      {
+        text: "金融机构",
+        value: "14",
+      },
+      {
+        text: "开发企业",
+        value: "15",
+      },
+      {
+        text: "代理人",
+        value: "16",
+      },
+      {
+        text: "非金融机构",
+        value: "17",
+      },
+      {
+        text: "其他",
+        value: "18",
+      },
+    ],
     ZJLX: [
       {
         text: "营业执照",
@@ -919,10 +993,142 @@ export default {
         value: "抵押登记",
       },
     ],
+    RYLX: [
+      {
+        text: "权利人",
+        value: "权利人",
+      },
+      {
+        text: "权利人代理人",
+        value: "权利人代理人",
+      },
+      {
+        text: "义务人",
+        value: "义务人",
+      },
+      {
+        text: "义务人代理人",
+        value: "义务人代理人",
+      },
+      {
+        text: "抵押人",
+        value: "抵押人",
+      },
+      {
+        text: "抵押人代理人",
+        value: "抵押人代理人",
+      },
+      {
+        text: "抵押权人",
+        value: "抵押权人",
+      },
+      {
+        text: "抵押权人代理人",
+        value: "抵押权人代理人",
+      },
+    ],
+    ZJLX: [
+      {
+        text: "营业执照",
+        value: "营业执照",
+      },
+      {
+        text: "身份证",
+        value: "身份证",
+      },
+      {
+        text: "统一社会信用代码",
+        value: "统一社会信用代码",
+      },
+    ],
+    QLRXZ: [
+      {
+        text: "个人",
+        value: "1",
+      },
+      {
+        text: "企业",
+        value: "2",
+      },
+      {
+        text: "事业单位",
+        value: "3",
+      },
+      {
+        text: "国家机关",
+        value: "4",
+      },
+      {
+        text: "国有",
+        value: "5",
+      },
+      {
+        text: "合资",
+        value: "6",
+      },
+      {
+        text: "事业",
+        value: "7",
+      },
+      {
+        text: "股份",
+        value: "8",
+      },
+      {
+        text: "集体",
+        value: "9",
+      },
+      {
+        text: "外资",
+        value: "10",
+      },
+      {
+        text: "有限责任",
+        value: "11",
+      },
+      {
+        text: "私有",
+        value: "12",
+      },
+      {
+        text: "机关",
+        value: "13",
+      },
+      {
+        text: "金融机构",
+        value: "14",
+      },
+      {
+        text: "开发企业",
+        value: "15",
+      },
+      {
+        text: "代理人",
+        value: "16",
+      },
+      {
+        text: "非金融机构",
+        value: "17",
+      },
+      {
+        text: "其他",
+        value: "18",
+      },
+    ],
     DengJiXiaoLei: [
       {
         text: "抵押权首次登记",
         value: "抵押权首次登记",
+      },
+    ],
+    ShiFuCunZaiJinZhi: [
+      {
+        text: "是",
+        value: "是",
+      },
+      {
+        text: "否",
+        value: "否",
       },
     ],
     DengJiYuanYin: [

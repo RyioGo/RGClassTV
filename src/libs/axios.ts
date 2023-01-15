@@ -9,6 +9,7 @@ import axios, {
 interface interceptors {
   UseRequest: (arg: AxiosRequestConfig) => AxiosRequestConfig;
   UseResponse: (arg: AxiosResponse) => AxiosResponse;
+  UseError: (arg: AxiosError) => Promise<AxiosError>;
 }
 
 class HttpClient {
@@ -27,7 +28,7 @@ class HttpClient {
         return options.UseRequest(config);
       },
       (error: AxiosError) => {
-        return Promise.reject(error);
+        return options.UseError(error);
       }
     );
     // 响应拦截器
@@ -38,7 +39,7 @@ class HttpClient {
       },
       // 请求失败
       (error: AxiosError) => {
-        return Promise.reject(error);
+        return options.UseError(error);
       }
     );
   }
