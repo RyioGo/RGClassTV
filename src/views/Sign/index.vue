@@ -27,11 +27,11 @@ export default class SignView extends Vue {
   //  全屏预览
   public isFall = false;
   //  创建成功的用户id
-  public accountId = this.storage.get("saveData")?.accountId;
+  public accountId = this.storage.get("saveData")?.accountId || "";
   //  签署文档返回到key值
-  public fileKeys: any = this.storage.get("saveData")?.fileKeys;
+  public fileKeys: any = this.storage.get("saveData")?.fileKeys || {};
   //  签章流程id
-  public signFlowId = this.storage.get("saveData").signFlowId;
+  public signFlowId = this.storage.get("saveData")?.signFlowId || "";
   //  pdf数据集合
   public pdfDoc = {
     doc: null,
@@ -106,7 +106,9 @@ export default class SignView extends Vue {
         let file: File = utils.base64ToFile(base64, item.path + ".pdf");
 
         //  转换后将file文件自动上传签章流程
-        this.upSignPDF(file);
+        if (!this.storage.get("saveData")) {
+          this.upSignPDF(file, item.path);
+        }
 
         this.pdfView[item.path] = base64;
 
@@ -124,14 +126,14 @@ export default class SignView extends Vue {
     this.$store.commit("loader/setOption", false);
   }
   //  上传签章文档
-  private async upSignPDF(file: File) {
+  private async upSignPDF(file: File, name: string) {
     let interface_id: string = this.storage.get("globalConfig").apis.dzqzwjzc;
     this.$store.commit("loader/setOption", "上传待签章文件...");
     const res = await gftApi.getFile(interface_id, file);
     if (res && res.code == 200) {
       res.data = JSON.parse(res.data);
       if (res.data.code == 200) {
-        this.fileKeys[file.name] = res.data.data.substring(
+        this.fileKeys[name] = res.data.data.substring(
           res.data.data.indexOf("=") + 1,
           res.data.data.indexOf(",")
         );
@@ -153,7 +155,7 @@ export default class SignView extends Vue {
       subject: this.storage.get("selectData").flowName,
       signDocs: this.pdfForms.map((item: any) => {
         return {
-          docFilekey: this.fileKeys[item.path + ".pdf"],
+          docFilekey: this.fileKeys[item.path],
           docName: item.path,
         };
       }),
@@ -163,7 +165,7 @@ export default class SignView extends Vue {
           accountType: 2,
           signDocDetails: this.pdfForms.map((item: any) => {
             return {
-              docFilekey: this.fileKeys[item.path + ".pdf"],
+              docFilekey: this.fileKeys[item.path],
               signPos: [
                 {
                   key: "权利人",
