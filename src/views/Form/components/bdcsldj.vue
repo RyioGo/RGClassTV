@@ -16,7 +16,7 @@ import RGDataPicker from "@/components/RGDataPicker/index.vue";
 })
 export default class bdcsldjCom extends Vue {
   //  表单步骤
-  public active = 3;
+  public active = 0;
   //   表单字典
   public dict = formDict.bdcdjsl;
   //   表单数据

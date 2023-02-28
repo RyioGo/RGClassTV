@@ -50,8 +50,8 @@ export default class SignView extends Vue {
     let interface_id: string = this.storage.get("globalConfig").apis.dzqzcjgr;
     this.$store.commit("loader/setOption", "创建电子签章用户...");
     const res = await gftApi.getGate(interface_id, {
-      loginMobile: "15697843293" || UserModule.userInfo.phone,
-      name: "苏文森" || UserModule.userInfo.name,
+      loginMobile: UserModule.userInfo.phone,
+      name: UserModule.userInfo.name,
     });
     if (res && res.code == 200) {
       res.data = JSON.parse(res.data);
