@@ -131,6 +131,7 @@ export default class SelectView extends Vue {
     });
     if (res && res.code == 200) {
       res.data = JSON.parse(res.data);
+      this.hasSaveData(res.data.flowName);
       //  存储需要的字段并设置临时缓存
       this.selectData = {
         formId: this.$route.query.formId || "default",
@@ -168,6 +169,29 @@ export default class SelectView extends Vue {
       }
     } else {
       this.$notify({ type: "warning", message: res.msg });
+    }
+  }
+
+  private hasSaveData(itemName: string) {
+    const data = this.storage.get("saveData");
+    if (data && itemName.includes(data.itemName)) {
+      this.$dialog
+        .confirm({
+          title: "事项存在记录",
+          message: "是否回到上次签章进度继续申报！",
+        })
+        .then(() => {
+          Object.keys(data).forEach((item: string) => {
+            this.storage.set(
+              item.substring(process.env.VUE_APP_CITY.length),
+              data[item]
+            );
+          });
+          this.$router.push("/sign");
+        })
+        .catch(() => {
+          // on cancel
+        });
     }
   }
 

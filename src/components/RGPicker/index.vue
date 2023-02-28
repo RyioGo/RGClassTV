@@ -17,8 +17,8 @@ export default class RGPicker extends Vue {
   //  规则
   @Prop({ type: Array, default: () => [] }) rules!: [];
   //  双向绑定
-  @PropSync("value", { type: [String, Number], required: true })
-  data!: string | number;
+  @PropSync("value", { required: true })
+  data!: any;
 
   public showPicker = false;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -3,19 +3,20 @@
 <script lang="ts">
 //  for node_modules api
 import { Component, Vue } from "vue-property-decorator";
-
+import moment from "moment";
 //  for you api
 import formDict from "./dict";
 //  for you ts
 
 //  for you components
 import RGPicker from "@/components/RGPicker/index.vue";
+import RGDataPicker from "@/components/RGDataPicker/index.vue";
 @Component({
-  components: { RGPicker },
+  components: { RGPicker, RGDataPicker },
 })
-export default class bdcdjslCom extends Vue {
+export default class bdcsldjCom extends Vue {
   //  表单步骤
-  public active = 0;
+  public active = 3;
   //   表单字典
   public dict = formDict.bdcdjsl;
   //   表单数据
@@ -126,10 +127,124 @@ export default class bdcdjslCom extends Vue {
       FuJi: "",
       RYXXList: [],
     },
+    //合同
+    hetong: {
+      contractNO: "",
+      sellerName: "",
+      sellerIdCard: "",
+      buyerName: "",
+      buyerIdCard: "",
+      houseAddress: "",
+      housePurpose: "",
+      houseConstruction: "",
+      houseArea: "",
+      houseCompletion: "",
+      houseNumber: "",
+      houseMutualNum: "",
+      houseSumMoney: "",
+      houseSumMoneyCase: "",
+      houseAverageMoney: "",
+      houseSolveWay: "",
+      houseDeliveryDay: "",
+      houseTransferProcedureDay: "",
+      houseConsultWithWay: "",
+      contractNum: "",
+      contractAverageNum: "",
+      contractOther: "",
+      sellerAgentTel: "",
+      buyerAgentTel: "",
+      createTime: "",
+    },
+    bilv: {
+      buyerName: "",
+      buyerMean: "",
+      buyerIsAlone: "",
+      buyerIsMutual: "",
+      buyerCommunalShare: "",
+      buyerIsCorrect: "",
+      buyerDuty: "",
+      buyerEms: "",
+      buyerOther: "",
+      buyerTime: "",
+      sellerName: "",
+      sellerMean: "",
+      sellerIsAlone: "",
+      sellerIsMutual: "",
+      sellerCommunalShare: "",
+      sellerIsCorrect: "",
+      sellerDuty: "",
+      sellerEms: "",
+      sellerOther: "",
+      sellerTime: "",
+    },
+    marriage: {
+      buy: {
+        name: "张三丰",
+        gender: "男",
+        credentialName: "身份证",
+        credentialNum: "362421198803288965",
+        noSpouse: "本人承诺无配偶",
+        divorceTime: "2024年1月22日",
+        dieTime: "2024年2月24日",
+        creteTime: "2024年2月24日",
+      },
+      sell: {
+        name: "张三丰",
+        gender: "男",
+        credentialName: "身份证",
+        credentialNum: "362421198803288965",
+        noSpouse: "本人承诺无配偶",
+        divorceTime: "2024年1月22日",
+        dieTime: "2024年2月24日",
+        creteTime: "2024年2月24日",
+      },
+      gzs_buy: {
+        name: "张三丰",
+        credentialName: "身份证",
+        credentialNum: "362421198803288965",
+        spouseName: "山本英子",
+        spouseNum: "362421198803288961",
+        childName1: "张老大",
+        childNum1: "362421198803288962",
+        childName2: "张老二",
+        childNum2: "362421198803288963",
+        location: "新余市仙女湖区XXX幸福里小区23栋1202号",
+        option1: false,
+        option2: false,
+        option3: true,
+        creteTime: "2024年2月24日",
+      },
+      gzs_sell: {
+        name: "张三丰",
+        credentialName: "身份证",
+        credentialNum: "362421198803288965",
+        spouseName: "山本英子",
+        spouseNum: "362421198803288961",
+        childName1: "张老大",
+        childNum1: "362421198803288962",
+        childName2: "张老二",
+        childNum2: "362421198803288963",
+        location: "新余市仙女湖区XXX幸福里小区23栋1202号",
+        option: true,
+        creteTime: "2024年2月24日",
+      },
+      tc_buy: {},
+      tc_sell: {},
+    },
   };
 
+  public getNoSpouse(date1: string, date2: string): string {
+    if (date1) {
+      return `本人于${date1}离婚后至今未再婚`;
+    }
+    if (date2) {
+      return `本人于${date2}日丧偶至今未再婚`;
+    }
+    return "本人至今从未登记结婚";
+  }
+
   public toPath() {
-    if (this.active >= 2) {
+    if (this.active >= 3) {
       this.setData();
       this.$router.push({
         name: "sign",
@@ -187,14 +302,116 @@ export default class bdcdjslCom extends Vue {
       },
     ];
 
-    this.storage.set("form", {
-      ...this.form.info,
-      ...this.form.ri,
-      ...this.form.ob,
-    });
+    this.form.hetong.contractNO = this.form.dataInfo.HeTongBianHao;
+    this.form.hetong.sellerName = this.form.ri.rightName;
+    this.form.hetong.buyerName = this.form.ob.obligeeName;
+    this.form.hetong.sellerIdCard = this.form.ri.ri_IdNum;
+    this.form.hetong.buyerIdCard = this.form.ob.ob_IdNum;
+    this.form.hetong.houseAddress = this.form.dataInfo.ZuoLuo;
+    this.form.hetong.housePurpose = this.form.dataInfo.GuiHuaYongTu;
+    this.form.hetong.houseConstruction = this.form.dataInfo.FangWuJieGou;
+    this.form.hetong.houseArea = this.form.dataInfo.JianZhuMianJi;
+    this.form.hetong.houseCompletion = this.form.dataInfo.JunGongShiJian;
+    this.form.hetong.houseNumber = this.form.dataInfo.FangWuQuanZhengHao;
+    this.form.hetong.houseMutualNum = this.form.dataInfo.GongYouQuanZhengHao;
+    this.form.hetong.houseSolveWay = this.form.dataInfo.FangKuanJiaoFuFangShi;
+    this.form.hetong.houseDeliveryDay = this.form.dataInfo.JiaFangJiaoFangRiQi;
+    this.form.hetong.houseTransferProcedureDay =
+      this.form.dataInfo.ZiXingBanLiRiQi;
+    this.form.hetong.houseConsultWithWay =
+      this.form.dataInfo.ShuangFangZhengYiJieJueFangShi;
+    this.form.hetong.contractNum = this.form.dataInfo.HeTongDaYinFenShu;
+    this.form.hetong.contractAverageNum = this.form.dataInfo.GeZhiFenShu;
+    this.form.hetong.contractOther = this.form.dataInfo.BuChongTiaoKuan;
+    this.form.hetong.sellerAgentTel = this.form.ri.ri_principalTel;
+    this.form.hetong.buyerAgentTel = this.form.ob.ob_principalTel;
+    this.form.hetong.createTime = this.form.dataInfo.HeTongQianDingRiQi;
 
+    this.form.bilv.buyerTime = moment().format("YYYY年MM月DD");
+    this.form.bilv.sellerTime = moment().format("YYYY年MM月DD");
+
+    //  婚姻状况-买
+    this.form.marriage.buy.noSpouse = this.getNoSpouse(
+      this.form.marriage.buy.divorceTime,
+      this.form.marriage.buy.dieTime
+    );
+    this.form.marriage.buy.creteTime = moment().format("YYYY年MM月DD");
+    // 税务证明文档-买
+    this.form.marriage.gzs_buy.name = this.form.marriage.buy.name;
+    this.form.marriage.gzs_buy.credentialName =
+      this.form.marriage.buy.credentialName;
+    this.form.marriage.gzs_buy.credentialNum =
+      this.form.marriage.buy.credentialNum;
+    this.form.marriage.gzs_buy.creteTime = moment().format("YYYY年MM月DD");
+    //  婚姻状况-售卖
+    this.form.marriage.sell.noSpouse = this.getNoSpouse(
+      this.form.marriage.sell.divorceTime,
+      this.form.marriage.sell.dieTime
+    );
+    this.form.marriage.sell.creteTime = moment().format("YYYY年MM月DD");
+    // 税务证明文档-售卖
+    this.form.marriage.gzs_sell.name = this.form.marriage.sell.name;
+    this.form.marriage.gzs_sell.credentialName =
+      this.form.marriage.sell.credentialName;
+    this.form.marriage.gzs_sell.credentialNum =
+      this.form.marriage.sell.credentialNum;
+    this.form.marriage.gzs_sell.creteTime = moment().format("YYYY年MM月DD");
+    // 买卖套次文档
+    this.form.marriage.tc_buy = this.form.marriage.gzs_buy;
+    this.form.marriage.tc_sell = this.form.marriage.gzs_sell;
+
+    this.storage.set("forms", [
+      {
+        path: "二手房转移登记及水电气联动过户",
+        type: ".docx",
+        form: {
+          ...this.form.info,
+          ...this.form.ri,
+          ...this.form.ob,
+        },
+      },
+      {
+        path: "不动产房屋买卖合同签署文件",
+        type: ".docx",
+        form: this.form.hetong,
+      },
+      {
+        path: "询问笔录",
+        type: ".docx",
+        form: this.form.bilv,
+      },
+      {
+        path: "婚姻状况承诺书（买方）",
+        type: ".docx",
+        form: this.form.marriage.buy,
+      },
+      {
+        path: "婚姻状况承诺书（卖方）",
+        type: ".docx",
+        form: this.form.marriage.sell,
+      },
+      // {
+      //   path: "税务证明事项告知承诺书（承受方）",
+      //   type: ".docx",
+      //   form: this.form.marriage.gzs_buy,
+      // },
+      // {
+      //   path: "税务证明事项告知承诺书（转让方）",
+      //   type: ".docx",
+      //   form: this.form.marriage.gzs_sell,
+      // },
+      {
+        path: "套次承诺书（承受方）",
+        type: ".docx",
+        form: this.form.marriage.tc_buy,
+      },
+      {
+        path: "套次承诺书（转让方）",
+        type: ".docx",
+        form: this.form.marriage.tc_sell,
+      },
+    ]);
     this.storage.set("dataInfo", this.form.dataInfo);
-    this.storage.set("filePath", "二手房转移登记及水电气联动过户.docx");
   }
 }
 </script>
@@ -203,10 +420,12 @@ export default class bdcdjslCom extends Vue {
   <div class="rg-form">
     <van-form class="rg-form-data">
       <van-steps :active="active" active-color="#38f">
-        <van-step>基本信息</van-step>
-        <van-step>申请人信息</van-step>
-        <van-step>其他信息</van-step>
-        <van-step>进行签章</van-step>
+        <van-step>默认</van-step>
+        <van-step>申请人</van-step>
+        <van-step>不动产</van-step>
+        <van-step>婚姻状况</van-step>
+        <van-step>询问笔录</van-step>
+        <van-step>签章</van-step>
       </van-steps>
       <div v-show="active == 0">
         <van-cell-group style="margin-top: 8px">
@@ -375,6 +594,21 @@ export default class bdcdjslCom extends Vue {
             label="规划用途"
             v-model="form.dataInfo.GuiHuaYongTu"
             placeholder="请填写规划用途"
+          />
+          <van-field
+            label="房屋总价(万元)"
+            v-model="form.hetong.houseSumMoney"
+            placeholder="房屋总价(万元)"
+          />
+          <van-field
+            label="房屋总价(大写)"
+            v-model="form.hetong.houseSumMoneyCase"
+            placeholder="房屋总价(万元)"
+          />
+          <van-field
+            label="房屋总价(计)"
+            v-model="form.hetong.houseAverageMoney"
+            placeholder="房屋总价(万元)"
           />
         </van-cell-group>
         <van-cell-group style="margin-top: 8px">
@@ -579,9 +813,11 @@ export default class bdcdjslCom extends Vue {
             v-model="form.dataInfo.ZiXingBanLiRiQi"
             placeholder="请填写自行办理日期"
           />
-          <van-field
+
+          <RGPicker
             label="争议解决方式"
-            v-model="form.dataInfo.ShuangFangZhengYiJieJueFangShi"
+            :value.sync="form.dataInfo.ShuangFangZhengYiJieJueFangShi"
+            :localData="dict.ShuangFangZhengYiJieJueFangShi"
             placeholder="请填写争议解决方式"
           />
           <van-field
@@ -667,6 +903,362 @@ export default class bdcdjslCom extends Vue {
             show-word-limit
             v-model="form.dataInfo.FuJi"
             placeholder="请填写备注"
+          />
+        </van-cell-group>
+      </div>
+      <div v-show="active == 3">
+        <van-cell-group style="margin-top: 8px">
+          <van-cell title="婚姻状况承诺书（买方）" titleClass="sub-title" />
+          <van-field
+            label="姓名"
+            v-model="form.marriage.buy.name"
+            placeholder="请填写姓名"
+          />
+          <RGPicker
+            label="性别"
+            :value.sync="form.marriage.buy.gender"
+            :localData="[
+              { text: '男', value: '男' },
+              { text: '女', value: '女' },
+            ]"
+            placeholder="请填写性别"
+          />
+          <RGPicker
+            label="证件名称"
+            :value.sync="form.marriage.buy.credentialName"
+            :localData="[
+              { text: '身份证', value: '身份证' },
+              { text: '军官证', value: '军官证' },
+              { text: '护照', value: '护照' },
+            ]"
+            placeholder="请填写证件名称"
+          />
+          <van-field
+            label="证件号码"
+            v-model="form.marriage.buy.credentialNum"
+            placeholder="请填写证件号码"
+          />
+          <van-field
+            label="配偶姓名"
+            v-model="form.marriage.gzs_buy.spouseName"
+            placeholder="请填写配偶姓名"
+          />
+          <van-field
+            label="配偶证件号"
+            v-model="form.marriage.gzs_buy.spouseNum"
+            placeholder="请填写配偶证件号"
+          />
+          <van-field
+            label="子女"
+            v-model="form.marriage.gzs_buy.childName1"
+            placeholder="请填写子女"
+          />
+          <van-field
+            label="子女证件号"
+            v-model="form.marriage.gzs_buy.childNum1"
+            placeholder="请填写子女证件号"
+          />
+          <van-field
+            label="子女"
+            v-model="form.marriage.gzs_buy.childName2"
+            placeholder="请填写子女"
+          />
+          <van-field
+            label="子女证件号"
+            v-model="form.marriage.gzs_buy.childNum2"
+            placeholder="请填写子女证件号"
+          />
+          <van-cell
+            center
+            title="个人购买家庭（成员范围包括购房人、配偶以及未成年子女，下同）唯一住房； "
+          >
+            <template #right-icon>
+              <van-switch v-model="form.marriage.gzs_buy.option1" />
+            </template>
+          </van-cell>
+          <van-cell center title="个人购买家庭第二套改善性住房">
+            <template #right-icon>
+              <van-switch v-model="form.marriage.gzs_buy.option2" />
+            </template>
+          </van-cell>
+          <van-cell center title="个人购买家庭第二套以上住房">
+            <template #right-icon>
+              <van-switch v-model="form.marriage.gzs_buy.option3" />
+            </template>
+          </van-cell>
+          <van-cell title="现居住地" titleClass="sub-title" />
+          <van-field
+            type="textarea"
+            rows="3"
+            autosize
+            maxlength="50"
+            show-word-limit
+            v-model="form.marriage.gzs_buy.location"
+            placeholder="请填写现居住地"
+          />
+          <van-cell title="无配偶情况" titleClass="sub-title" />
+          <RGDataPicker
+            label="是否离婚"
+            :value.sync="form.marriage.buy.divorceTime"
+          />
+          <RGDataPicker
+            label="是否丧偶"
+            :value.sync="form.marriage.buy.dieTime"
+          />
+          <van-cell v-if="active == 3">
+            <van-notice-bar
+              color="#1989fa"
+              background="#ecf9ff"
+              left-icon="info-o"
+              speed="40"
+            >
+              友情提示：根据交易的实际情况，请将个人最后的婚姻情况填写。
+            </van-notice-bar>
+          </van-cell>
+        </van-cell-group>
+
+        <van-cell-group style="margin-top: 8px">
+          <van-cell title="婚姻状况承诺书（卖方）" titleClass="sub-title" />
+          <van-field
+            label="姓名"
+            v-model="form.marriage.sell.name"
+            placeholder="请填写姓名"
+          />
+          <RGPicker
+            label="性别"
+            :value.sync="form.marriage.sell.gender"
+            :localData="[
+              { text: '男', value: '男' },
+              { text: '女', value: '女' },
+            ]"
+            placeholder="请填写性别"
+          />
+          <RGPicker
+            label="证件名称"
+            :value.sync="form.marriage.sell.credentialName"
+            :localData="[
+              { text: '身份证', value: '身份证' },
+              { text: '军官证', value: '军官证' },
+              { text: '护照', value: '护照' },
+            ]"
+            placeholder="请填写证件名称"
+          />
+          <van-field
+            label="证件号码"
+            v-model="form.marriage.sell.credentialNum"
+            placeholder="请填写证件号码"
+          />
+          <van-field
+            label="配偶姓名"
+            v-model="form.marriage.gzs_buy.spouseName"
+            placeholder="请填写配偶姓名"
+          />
+          <van-field
+            label="配偶证件号"
+            v-model="form.marriage.gzs_buy.spouseNum"
+            placeholder="请填写配偶证件号"
+          />
+          <van-field
+            label="子女"
+            v-model="form.marriage.gzs_buy.childName1"
+            placeholder="请填写子女"
+          />
+          <van-field
+            label="子女证件号"
+            v-model="form.marriage.gzs_buy.childNum1"
+            placeholder="请填写子女证件号"
+          />
+          <van-field
+            label="子女"
+            v-model="form.marriage.gzs_buy.childName2"
+            placeholder="请填写子女"
+          />
+          <van-field
+            label="子女证件号"
+            v-model="form.marriage.gzs_buy.childNum2"
+            placeholder="请填写子女证件号"
+          />
+
+          <RGPicker
+            label="售房条件"
+            :value.sync="form.marriage.gzs_sell.option"
+            :localData="[
+              {
+                text: '个人出售家庭唯一住房并且购房时间满 五年',
+                value: true,
+              },
+              {
+                text: '个人出售家庭非唯一住房或者购房时间不满五年',
+                value: false,
+              },
+            ]"
+            placeholder="请填写证件名称"
+          />
+          <van-cell v-if="active == 3">
+            <van-notice-bar
+              color="#1989fa"
+              background="#ecf9ff"
+              left-icon="info-o"
+              speed="40"
+            >
+              友情提示：（成员范围包括购房人、配偶以及未成年子女。以上次购房缴纳契税，取得契税税票之日起算）
+            </van-notice-bar>
+          </van-cell>
+          <van-cell title="现居住地" titleClass="sub-title" />
+          <van-field
+            type="textarea"
+            rows="3"
+            autosize
+            maxlength="50"
+            show-word-limit
+            v-model="form.marriage.gzs_sell.location"
+            placeholder="请填写现居住地"
+          />
+          <van-cell title="无配偶情况" titleClass="sub-title" />
+          <RGDataPicker
+            label="是否离婚"
+            :value.sync="form.marriage.sell.divorceTime"
+          />
+          <RGDataPicker
+            label="是否丧偶"
+            :value.sync="form.marriage.sell.dieTime"
+          />
+          <van-cell v-if="active == 3">
+            <van-notice-bar
+              color="#1989fa"
+              background="#ecf9ff"
+              left-icon="info-o"
+              speed="40"
+            >
+              友情提示：根据交易的实际情况，请将个人最后的婚姻情况填写。
+            </van-notice-bar>
+          </van-cell>
+        </van-cell-group>
+      </div>
+      <div v-show="active == 4">
+        <van-cell-group style="margin-top: 8px">
+          <van-cell title="不动产登记询问笔录（买方）" titleClass="sub-title" />
+          <van-cell title="询问人" />
+          <van-field v-model="form.bilv.buyerName" placeholder="请填写询问人" />
+          <van-cell title="申请登记事项是否为申请人真实意思表示？" />
+          <RGPicker
+            :value.sync="form.bilv.buyerMean"
+            :localData="[
+              { text: '是', value: '是' },
+              { text: '否', value: '否' },
+            ]"
+            placeholder="请填写是或否"
+          />
+          <van-cell title="申请登记的房地产是共有还是单独所有？" />
+          <RGPicker
+            :value.sync="form.bilv.buyerIsAlone"
+            :localData="[
+              { text: '共有', value: '共有' },
+              { text: '单独所有', value: '单独所有' },
+            ]"
+            placeholder="请填写共有或单独所有"
+          />
+          <van-cell title="申请登记的房地产是按份共有，还是共同共有？" />
+          <RGPicker
+            :value.sync="form.bilv.buyerIsMutual"
+            :localData="[
+              { text: '按份共有', value: '按份共有' },
+              { text: '共同共有', value: '共同共有' },
+            ]"
+            placeholder="共有情况下，请填写是按份共有或共同共有"
+          />
+          <van-cell title="申请登记的房地产共有份额情况？" />
+          <van-field
+            v-model="form.bilv.buyerCommunalShare"
+            placeholder="按份共有下，请填写共有具体份额。共同共有人不填写"
+          />
+          <van-cell title="申请异议登记时，权利人是否不同意办理更正登记？" />
+          <van-field
+            v-model="form.bilv.buyerIsCorrect"
+            placeholder="申请异议登记时填写，申请其他登记不填写本栏"
+          />
+          <van-cell title="申请异议登记时，是否已知悉异议不当应承担的责任？" />
+          <van-field
+            v-model="form.bilv.buyerDuty"
+            placeholder="申请异议登记时填写，申请其他登记不填写本栏"
+          />
+          <van-cell title="是否需要快递邮寄证书?" />
+          <RGPicker
+            :value.sync="form.bilv.buyerEms"
+            :localData="[
+              { text: '是', value: '是' },
+              { text: '否', value: '否' },
+            ]"
+            placeholder="请填写是或否"
+          />
+          <van-cell title="其他需要询问的有关事项" />
+          <van-field
+            v-model="form.bilv.buyerOther"
+            placeholder="其他需要询问的有关事项"
+          />
+        </van-cell-group>
+        <van-cell-group style="margin-top: 8px">
+          <van-cell title="不动产登记询问笔录（卖方）" titleClass="sub-title" />
+          <van-cell title="询问人" />
+          <van-field
+            v-model="form.bilv.sellerName"
+            placeholder="请填写询问人"
+          />
+          <van-cell title="申请登记事项是否为申请人真实意思表示？" />
+          <RGPicker
+            :value.sync="form.bilv.sellerMean"
+            :localData="[
+              { text: '是', value: '是' },
+              { text: '否', value: '否' },
+            ]"
+            placeholder="请填写是或否"
+          />
+          <van-cell title="申请登记的房地产是共有还是单独所有？" />
+          <RGPicker
+            :value.sync="form.bilv.sellerIsAlone"
+            :localData="[
+              { text: '共有', value: '共有' },
+              { text: '单独所有', value: '单独所有' },
+            ]"
+            placeholder="请填写共有或单独所有"
+          />
+          <van-cell title="申请登记的房地产是按份共有，还是共同共有？" />
+          <RGPicker
+            :value.sync="form.bilv.sellerIsMutual"
+            :localData="[
+              { text: '按份共有', value: '按份共有' },
+              { text: '共同共有', value: '共同共有' },
+            ]"
+            placeholder="共有情况下，请填写是按份共有或共同共有"
+          />
+          <van-cell title="申请登记的房地产共有份额情况？" />
+          <van-field
+            v-model="form.bilv.sellerCommunalShare"
+            placeholder="按份共有下，请填写共有具体份额。共同共有人不填写"
+          />
+          <van-cell title="申请异议登记时，权利人是否不同意办理更正登记？" />
+          <van-field
+            v-model="form.bilv.sellerIsCorrect"
+            placeholder="申请异议登记时填写，申请其他登记不填写本栏"
+          />
+          <van-cell title="申请异议登记时，是否已知悉异议不当应承担的责任？" />
+          <van-field
+            v-model="form.bilv.sellerDuty"
+            placeholder="申请异议登记时填写，申请其他登记不填写本栏"
+          />
+          <van-cell title="是否需要快递邮寄证书?" />
+          <RGPicker
+            :value.sync="form.bilv.sellerEms"
+            :localData="[
+              { text: '是', value: '是' },
+              { text: '否', value: '否' },
+            ]"
+            placeholder="请填写是或否"
+          />
+          <van-cell title="其他需要询问的有关事项" />
+          <van-field
+            v-model="form.bilv.sellerOther"
+            placeholder="其他需要询问的有关事项"
           />
         </van-cell-group>
       </div>

@@ -23,7 +23,7 @@ import vueclipboard from "vue-clipboard2";
 // new VConsole();
 
 export const storage: StorageClient = new StorageClient({
-  storage: sessionStorage,
+  storage: localStorage,
   lock: process.env.VUE_APP_CITY,
   clearTime: 3 * 60 * 60 * 1000,
 });
@@ -35,7 +35,7 @@ export default (): void => {
   Vue.prototype.pinyin = (str: string) => {
     return pinyin(str, {
       compact: true,
-      style: "FIRST_LETTER",
+      style: pinyin.FIRST_LETTER,
     });
   };
 

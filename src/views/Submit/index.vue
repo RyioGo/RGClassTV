@@ -247,6 +247,7 @@ export default class SubmitView extends Vue {
           type: "success",
           message: "提交成功，请耐心等待审批通知！",
           onClose: () => {
+            this.storage.remove("saveData");
             this.$store.commit("loader/setOption", false);
             window.location.replace(this.storage.get("href"));
           },

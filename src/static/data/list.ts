@@ -419,7 +419,7 @@ const list: any = {
       flowId: "D55CA91A94FD42E199E07BE1F14A839C",
       flowName: "不动产继承“公证+登记”",
       img: "bdczydjjsdqldgh.png",
-      formId: "bdcsldj",
+      formId: "bdcjcdj",
       serviceObj: "1",
     },
     {

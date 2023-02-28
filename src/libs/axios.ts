@@ -22,24 +22,25 @@ class HttpClient {
     this.interceptors(interceptors);
   }
 
-  private interceptors(options: interceptors) {
+  private interceptors(interceptors: interceptors) {
     this.request.interceptors.request.use(
-      (config: AxiosRequestConfig) => {
-        return options.UseRequest(config);
+      (config: AxiosRequestConfig): any => {
+        return interceptors.UseRequest(config);
       },
       (error: AxiosError) => {
-        return options.UseError(error);
+        return interceptors.UseError(error);
       }
     );
+
     // 响应拦截器
     this.request.interceptors.response.use(
       // 请求成功
       (response: AxiosResponse) => {
-        return options.UseResponse(response);
+        return interceptors.UseResponse(response);
       },
       // 请求失败
       (error: AxiosError) => {
-        return options.UseError(error);
+        return interceptors.UseError(error);
       }
     );
   }

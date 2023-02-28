@@ -4,7 +4,6 @@ module.exports = {
   assetsDir: "static", // 相对于outputDir的静态资源(js、css、img、fonts)目录
   chainWebpack: (config) => {
     config.plugin("html").tap((args) => {
-      console.log(args);
       args[0].title = process.env.VUE_APP_NAME;
       return args;
     });
@@ -27,13 +26,6 @@ module.exports = {
           ["^" + process.env.VUE_APP_BASE_API]: "/",
         },
       },
-      /*       [process.env.VUE_APP_BASE_API]: {
-        target: "http://txb.xysstgs.com:8086" || process.env.VUE_APP_API,
-        changeOrigin: true,
-        pathRewrite: {
-          ["^" + process.env.VUE_APP_BASE_API]: "/",
-        },
-      }, */
     },
   },
 };

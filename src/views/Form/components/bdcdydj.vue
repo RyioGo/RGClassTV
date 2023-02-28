@@ -2,6 +2,7 @@
 <!-- eslint-disable @typescript-eslint/no-explicit-any -->
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import moment from "moment";
 import RGPicker from "@/components/RGPicker/index.vue";
 import formDict from "./dict";
 @Component({
@@ -84,10 +85,22 @@ export default class bdcdydjCom extends Vue {
       QiTaQuanLiZK: "",
       FuJi: "",
     },
+    bilv: {
+      buyerName: "",
+      buyerMean: "",
+      buyerIsAlone: "",
+      buyerIsMutual: "",
+      buyerCommunalShare: "",
+      buyerIsCorrect: "",
+      buyerDuty: "",
+      buyerEms: "",
+      buyerOther: "",
+      buyerTime: "",
+    },
   };
 
   public toPath() {
-    if (this.active >= 2) {
+    if (this.active >= 3) {
       this.setData();
       this.$router.push({
         name: "sign",
@@ -139,15 +152,26 @@ export default class bdcdydjCom extends Vue {
         DH: this.form.ob.ob_agentTel,
       },
     ];
+    this.form.bilv.buyerTime = moment().format("YYYY年MM月DD");
 
-    this.storage.set("form", {
-      ...this.form.info,
-      ...this.form.ri,
-      ...this.form.ob,
-    });
+    this.storage.set("forms", [
+      {
+        path: "不动产抵押登记",
+        type: ".docx",
+        form: {
+          ...this.form.info,
+          ...this.form.ri,
+          ...this.form.ob,
+        },
+      },
+      {
+        path: "不动产询问笔录",
+        type: ".docx",
+        form: this.form.bilv,
+      },
+    ]);
 
     this.storage.set("dataInfo", this.form.dataInfo);
-    this.storage.set("filePath", "不动产抵押登记.docx");
   }
 }
 </script>
@@ -158,8 +182,9 @@ export default class bdcdydjCom extends Vue {
       <van-steps :active="active" active-color="#38f">
         <van-step>基本信息</van-step>
         <van-step>申请人信息</van-step>
-        <van-step>其他信息</van-step>
-        <van-step>进行签章</van-step>
+        <van-step>不动产</van-step>
+        <van-step>询问笔录</van-step>
+        <van-step>签章</van-step>
       </van-steps>
       <div v-show="active == 0">
         <van-cell-group style="margin-top: 8px">
@@ -398,6 +423,69 @@ export default class bdcdydjCom extends Vue {
             show-word-limit
             v-model="form.dataInfo.FuJi"
             placeholder="请填写备注"
+          />
+        </van-cell-group>
+      </div>
+      <div v-show="active == 3">
+        <van-cell-group>
+          <van-cell title="不动产登记询问笔录" titleClass="sub-title" />
+          <van-cell title="询问人" />
+          <van-field v-model="form.bilv.buyerName" placeholder="请填写询问人" />
+          <van-cell title="申请登记事项是否为申请人真实意思表示？" />
+          <RGPicker
+            :value.sync="form.bilv.buyerMean"
+            :localData="[
+              { text: '是', value: '是' },
+              { text: '否', value: '否' },
+            ]"
+            placeholder="请填写是或否"
+          />
+          <van-cell title="申请登记的房地产是共有还是单独所有？" />
+          <RGPicker
+            :value.sync="form.bilv.buyerIsAlone"
+            :localData="[
+              { text: '共有', value: '共有' },
+              { text: '单独所有', value: '单独所有' },
+            ]"
+            placeholder="请填写共有或单独所有"
+          />
+          <van-cell title="申请登记的房地产是按份共有，还是共同共有？" />
+          <RGPicker
+            :value.sync="form.bilv.buyerIsMutual"
+            :localData="[
+              { text: '按份共有', value: '按份共有' },
+              { text: '共同共有', value: '共同共有' },
+            ]"
+            placeholder="共有情况下，请填写是按份共有或共同共有"
+          />
+          <van-cell title="申请登记的房地产共有份额情况？" />
+          <van-field
+            v-model="form.bilv.buyerCommunalShare"
+            placeholder="按份共有下，请填写共有具体份额。共同共有人不填写"
+          />
+          <van-cell title="申请异议登记时，权利人是否不同意办理更正登记？" />
+          <van-field
+            v-model="form.bilv.buyerIsCorrect"
+            placeholder="申请异议登记时填写，申请其他登记不填写本栏"
+          />
+          <van-cell title="申请异议登记时，是否已知悉异议不当应承担的责任？" />
+          <van-field
+            v-model="form.bilv.buyerDuty"
+            placeholder="申请异议登记时填写，申请其他登记不填写本栏"
+          />
+          <van-cell title="是否需要快递邮寄证书?" />
+          <RGPicker
+            :value.sync="form.bilv.buyerEms"
+            :localData="[
+              { text: '是', value: '是' },
+              { text: '否', value: '否' },
+            ]"
+            placeholder="请填写是或否"
+          />
+          <van-cell title="其他需要询问的有关事项" />
+          <van-field
+            v-model="form.bilv.buyerOther"
+            placeholder="其他需要询问的有关事项"
           />
         </van-cell-group>
       </div>
