@@ -4,7 +4,7 @@ import { Component, Prop, PropSync, Vue } from "vue-property-decorator";
 @Component
 export default class RGPicker extends Vue {
   //  描述
-  @Prop({ type: String, default: "请输入" }) placeholder!: string;
+  @Prop({ type: String, default: "请选择" }) placeholder!: string;
   //  名称
   @Prop({ type: String, default: "" }) label!: string;
   //  规则
@@ -34,8 +34,9 @@ export default class RGPicker extends Vue {
       clickable
       :label="label"
       v-model="data"
-      :placeholder="placeholder"
+      :placeholder="placeholder + label"
       @click="showPicker = true"
+      :required="rules.length > 0"
       :rules="rules"
     />
     <van-calendar

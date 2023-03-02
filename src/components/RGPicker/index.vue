@@ -54,6 +54,7 @@ export default class RGPicker extends Vue {
       v-model="labelData"
       :placeholder="placeholder"
       @click="showPicker = true"
+      :required="rules.length > 0"
       :rules="rules"
     />
     <van-popup v-model="showPicker" position="bottom">

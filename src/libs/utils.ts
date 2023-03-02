@@ -8,6 +8,11 @@ class UtilsClient {
   typeOf(data: any): string {
     return Object.prototype.toString.call(data).slice(8, -1).toLowerCase();
   }
+
+  getDictLabel(dict: any, value: any) {
+    return dict.find((item: any) => item.value == value).text;
+  }
+
   toEval(options: toEvalOptionsType) {
     const { appCode, appName, appRegCode, appRegName, abilityCode, organCode } =
       options;
