@@ -995,8 +995,6 @@ export default class esfzydjjsdqldghCom extends Vue {
             show-word-limit
             v-model="form.dataInfo.BuChongTiaoKuan"
             placeholder="请填写补充条款"
-            required
-            :rules="[{ required: active == 2, message: '请填写补充条款' }]"
           />
         </van-cell-group>
         <van-cell-group style="margin-top: 8px">
@@ -1009,8 +1007,6 @@ export default class esfzydjjsdqldghCom extends Vue {
             show-word-limit
             v-model="form.dataInfo.FuJi"
             placeholder="请填写备注"
-            required
-            :rules="[{ required: active == 2, message: '请填写备注' }]"
           />
         </van-cell-group>
       </div>

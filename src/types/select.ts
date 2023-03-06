@@ -7,6 +7,12 @@ export interface selectDataType<T> {
   formId: string | (string | null)[];
 }
 
+export interface selectType {
+  itemId: string;
+  regionName?: string;
+  regionCode?: string;
+}
+
 export interface selectDataItemType<T> {
   items: Array<T>;
   must: string;
@@ -15,7 +21,7 @@ export interface selectDataItemType<T> {
   statusId: string;
   statusMode: string;
   statusName: string;
-  select?: string | Array<string>;
+  select?: Array<string> | string;
 }
 
 export interface itemsType {

@@ -19,6 +19,9 @@ import RGHeader from "@/components/RGHeader/index.vue";
   components: { RGHeader },
 })
 export default class SelectView extends Vue {
+  vShow(vShow: any) {
+    throw new Error("Method not implemented.");
+  }
   public selectData: selectDataType<selectDataItemType<itemsType>> = {
     flowName: "",
     serviceObj: "",
@@ -68,7 +71,12 @@ export default class SelectView extends Vue {
 
   public async toPath(): Promise<void> {
     try {
-      let selectItem: Array<string> = [];
+      let selectItem: Array<{
+        itemId: string;
+        itemType: string;
+        regionCode?: string;
+        regionName?: string;
+      }> = [];
       //  对事项清单进行收集整理
       this.selectData.data.forEach((item: selectDataItemType<itemsType>) => {
         //  抛出未进行必选操作的提醒
@@ -77,9 +85,32 @@ export default class SelectView extends Vue {
         }
         //  汇总选中的事项清单且跳过未选的业务
         if (item.select?.length) {
-          item.statusMode == "0"
-            ? selectItem.push(item.select as string)
-            : (selectItem = selectItem.concat(item.select));
+          if (item.statusMode == "0") {
+            selectItem.push({
+              itemId: item.select as string,
+              regionCode: item.items[0].orgCode,
+              regionName: item.items[0].orgName,
+              itemType: item.items[0].itemType,
+            });
+          } else {
+            selectItem = selectItem.concat(
+              (item.select as []).map((it: string, ind: number) => {
+                return {
+                  itemId: it as string,
+                  regionCode: item.items[ind].orgCode,
+                  regionName: item.items[ind].orgName,
+                  itemType: item.items[ind].itemType,
+                };
+              })
+            );
+          }
+          selectItem.forEach((it: any) => {
+            if (it.itemType == "1") {
+              delete it.itemType;
+              delete it.regionCode;
+              delete it.regionName;
+            }
+          });
         }
       });
       //  办理流程中，未选中任意一项待办事项，抛出提示信息
@@ -92,7 +123,7 @@ export default class SelectView extends Vue {
       this.$store.commit("loader/setOption", "生成办件须知...");
       const res = await gftApi.getGate(interface_id, {
         flowId: this.$route.query.flowId,
-        selectItem: selectItem.toString(),
+        selectItem: selectItem.map((it) => it.itemId).toString(),
       });
       if (res && res.code == 200) {
         res.data = JSON.parse(res.data);
