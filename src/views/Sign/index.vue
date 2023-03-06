@@ -50,8 +50,8 @@ export default class SignView extends Vue {
     let interface_id: string = this.storage.get("globalConfig").apis.dzqzcjgr;
     this.$store.commit("loader/setOption", "创建电子签章用户...");
     const res = await gftApi.getGate(interface_id, {
-      loginMobile: UserModule.userInfo.phone,
-      name: UserModule.userInfo.name,
+      loginMobile: "15697843293" || UserModule.userInfo.phone,
+      name: "苏文森" || UserModule.userInfo.name,
     });
     if (res && res.code == 200) {
       res.data = JSON.parse(res.data);
@@ -153,6 +153,7 @@ export default class SignView extends Vue {
     this.$store.commit("loader/setOption", "创建签章业务...");
     const res = await gftApi.getGate(interface_id, {
       subject: this.storage.get("selectData").flowName,
+      redirectUrl: window.location.href + "sign",
       signDocs: this.pdfForms.map((item: any) => {
         return {
           docFilekey: this.fileKeys[item.path],
@@ -198,14 +199,27 @@ export default class SignView extends Vue {
           }
         });
         delete storage.userInfo;
+        console.log(
+          res.data.data.substring(
+            res.data.data.indexOf("signUrl=") + 8,
+            res.data.data.indexOf(", signUrlBase64=")
+          )
+        );
 
         this.storage.set("saveData", storage);
 
-        this.$dialog.alert({
-          title: "已创建签章流程",
-          message: `提示：签章过程中请勿退出此页面，\n稍后将会发送短信至${UserModule.forPhone}。`,
-          theme: "round-button",
-        });
+        this.$dialog
+          .alert({
+            title: "已创建签章流程",
+            message: `提示：即将前往签章站点，\n并且稍后将会发送短信至${UserModule.forPhone}。`,
+            theme: "round-button",
+          })
+          .then(() => {
+            window.location.href = res.data.data.substring(
+              res.data.data.indexOf("signUrl=") + 8,
+              res.data.data.indexOf(", signUrlBase64=")
+            );
+          });
       } else {
         //  原接口
         this.$notify({ type: "warning", message: res.data.message });

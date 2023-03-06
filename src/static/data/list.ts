@@ -417,7 +417,7 @@ const list: any = {
     {
       declareUrl: "",
       flowId: "D55CA91A94FD42E199E07BE1F14A839C",
-      flowName: "不动产继承“公证+登记”",
+      flowName: "不动产继承(公证及登记)",
       img: "bdczydjjsdqldgh.png",
       formId: "bdcjcgzdj",
       serviceObj: "1",
